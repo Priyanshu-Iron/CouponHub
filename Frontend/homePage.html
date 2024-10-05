@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:slnt,wght@1,100..1000&family=Merienda:wght@300..900&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="homePage.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CouponHub</title>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="#top" id="logo">CouponHub</a>
+
+        <ul class="nav-links">
+            <li><a href="#Trade" id="links">Trade</a></li>
+            <li><a href="#projects" id="links">Collection</a></li>
+            <li><a href="#projects" id="links">Tutorials</a></li>
+            <li><a href="#projects" id="links">Github</a></li>
+        </ul>
+
+        <a href="#getStarted" id="getStarted">Get Started</a>
+
+        <div class="burger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+    </nav>
+
+    <div id="top">
+        <div id="nameDiv">
+            <h2 id="revolutioniseh2" data-aos="fade-up" data-aos-anchor="#top" data-aos-anchor-placement="top-center" data-aos-delay="250">Revolutionise</h2>
+            <h1 id="sentence1h1" data-aos="fade-up" data-aos-anchor="#top" data-aos-anchor-placement="top-center" data-aos-delay="500">the way you use a Coupon</h1>
+            <h1 id="sentence2h1" data-aos="fade-up" data-aos-anchor="#top" data-aos-anchor-placement="top-center" data-aos-delay="900">Using <span id="CH">CouponHub</span></h1>
+            <div class="sentence" data-aos="fade-up" data-aos-anchor="#top" data-aos-anchor-placement="top-center" data-aos-delay="1200">
+                <h2 id="sentence3h2">Buy</h2>
+                <h2 id="comaSign">,</h2>
+                <h2 id="sentence3h2">Sell</h2>
+                <h2 id="andSign">&</h2>
+                <h2 id="Exchange">Exchange</h2>
+            </div>
+        </div>
+    </div>
+
+    <div id="Trade" class="Trade" data-aos="fade-up">
+        <div class="cardContainer" data-aos="fade-up">
+            <article class="cardArticle">
+                <img src="Assets/CouponPurchase.webp" alt="image" class="cardImage">
+
+                <div class="cardData">
+                    <span class="cardDescription">Buy Coupon form CouponHub</span>
+                    <h2 class="cardTitle">Buy Coupon</h2>
+                    <a href="#" class="cardButton">ReadMore</a>
+                </div>
+            </article>
+
+            <article class="cardArticle">
+                <img src="Assets/SellCoupon.webp" alt="image" class="cardImage">
+
+                <div class="cardData">
+                    <span class="cardDescription">Sell Coupon on CouponHub</span>
+                    <h2 class="cardTitle">Sell Coupon</h2>
+                    <a href="#" class="cardButton">ReadMore</a>
+                </div>
+            </article>
+
+            <article class="cardArticle">
+                <img src="Assets/Exchange Coupon.webp" alt="image" class="cardImage">
+
+                <div class="cardData">
+                    <span class="cardDescription">Exchange Coupon on CouponHub</span>
+                    <h2 class="cardTitle">Exchange Coupon</h2>
+                    <a href="#" class="cardButton">ReadMore</a>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <div id="Collection"></div>
+
+    <div id="Tutorials"></div>
+
+    <div id="AboutUs"></div>
+
+    <!-- Initialize AOS with smoother animations -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1500,  // Animation duration in milliseconds
+            easing: 'ease-in-out',  // Easing function for smooth animation
+            once: true,  // Animation happens only once
+            anchorPlacement: 'top-center',  // Position the animation starts
+        });
+    </script>
+
+</body>
+</html>

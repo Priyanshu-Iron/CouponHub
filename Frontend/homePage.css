@@ -1,0 +1,392 @@
+html{
+    scroll-behavior: smooth;
+}
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    padding: 0;
+    margin: 0;
+    width: 100;
+    height: 100vh;
+    overflow-x: hidden;
+}
+
+.pacifico-regular {
+    font-family: "Pacifico", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* // <uniquifier>: Use a unique and descriptive class name
+// <weight>: Use a value from 100 to 1000 */
+
+.afacad-flux-navbarText {
+  font-family: "Afacad Flux", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "slnt" 0;
+}
+
+.merienda-HeadingFont {
+  font-family: "Merienda", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    background: white;
+    position: fixed;
+    width: 100%;
+    max-width: 100vw;
+    z-index: 10000;
+    /* margin-top: 10px */
+}
+
+#logo{
+    margin: 30px;
+    /* width: 50px;
+    height: 50px; */
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #FF6500;
+    font-family: "Pacifico", cursive;
+}
+
+/* #logo:hover{
+    color: black;
+} */
+
+.nav-links{
+    display: flex;
+    justify-content: space-around;
+    width: 600px;
+}
+
+.nav-links a{
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: "Afacad Flux", sans-serif;
+    font-size: 20px;
+    cursor: pointer;
+    position: relative;
+    padding: relative;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: #1E3E62;
+}
+
+nav ul li{
+    list-style-type: none;
+}
+
+.nav-links a:after{
+    bottom: 0;
+    content: "";
+    height: 3px;
+    left: 50%;
+    position: absolute;
+    background-color: #FF6500;
+    transition: width 0.3s ease 0s, left 0.3s ease 0s;
+    width: 0;
+}
+
+.nav-links a:hover::after{
+    width: 100%;
+    left: 0;
+}
+
+#getStarted{
+    text-decoration: none;
+    font-family: "Afacad Flux", sans-serif;
+    color: #1E3E62;
+    letter-spacing: 2px;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 15px;
+    padding: 10px;
+    display: inline-block;
+    margin: 30px;
+    border: 2px solid transparent;
+    border: #1E3E62;
+}
+
+#getStarted:hover{
+    background-color: #FF6500;
+}
+
+.burger{
+    display: none;
+    cursor: pointer;
+    margin: 20px;
+}
+
+.burger div {
+    width: 25px;
+    height: 3px;
+    margin: 5px;
+    background-color: #FF6500;
+    transition: all 0.3s ease;
+}
+
+h2{
+    color: #1E3E62;
+    /* font-size: 9rem; */
+    text-align: center;
+    font-family: "Merienda", cursive;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#revolutioniseh2{
+    font-size: 7rem;
+    color: #FF6500;
+}
+
+h1{
+    color: #0B192C;
+    font-size: 5rem;
+    text-align: center;
+    font-family: "Afacad Flux", sans-serif;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#andSign, 
+#comaSign{
+    color: #FF6500;
+}
+
+.sentence{
+    display: flex;
+    justify-content: space-around;
+    font-size: 5.5rem;
+}
+
+#Exchange{
+    position: relative;
+}
+
+#Exchange::after{
+    content: "";
+    position: absolute;
+    width: 100%;
+    border-top: solid 10px #FF6500;
+    left: 0%;
+    bottom: 0px;
+    border-radius: 90%;
+    height: 20px;
+    transition: width 0.3s ease 0s, left 0.3s ease 0s;
+}
+
+#Exchange:hover::after{
+    width: 0%;
+    left: 50%;
+}
+
+#top{
+    width: 100%;
+    min-height: 100vh;
+}
+
+#CH {
+    font-family: "Pacifico", cursive;
+    color: #FF6500;
+    font-weight: 100;
+    position: relative;  /* Required for the ::after positioning */
+}
+
+#top {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw; /* Ensure full viewport width without overflow */
+    max-width: 100%; /* Prevent horizontal scroll */
+    /* min-height: 100vh; Ensure the section takes up the full viewport height */
+    padding: 30px;
+    margin: 0 auto; /* Center the content */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Trade */
+
+.Trade {
+    display: grid;
+    place-items: center;
+    padding-block: 5rem;
+    background-image: linear-gradient(75deg,#1E3E62, #000000, #0B192C);
+    font-family: "Afacad Flux", sans-serif;
+}
+
+.cardContainer {
+    display: grid;
+    row-gap: 3.5rem;
+}
+
+.cardArticle {
+    position: relative;
+    overflow: hidden; /* Added to handle overflow on hover */
+}
+
+.cardImage {
+    width: 500px;
+    height: 500px;
+    border-radius: 1.5rem;
+}
+
+.cardData {
+    width: 280px;
+    background-color: white;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 8px 24px hsla(0, 0%, 0%, .15);
+    border-radius: 1rem;
+    position: absolute;
+    bottom: -9rem;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    opacity: 0;
+    transition: opacity 1s 1s;
+    text-align: center;
+}
+
+.cardDescription {
+    display: block;
+    font-size: 1.2rem;
+    margin-bottom: .25rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.cardTitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #FF6500;
+    font-family: "Afacad Flux", sans-serif;
+}
+
+.cardButton {
+    text-decoration: none;
+    font-size: var(--small-font-size);
+    font-weight: 500;
+    color: var(--first-color);
+}
+
+.cardButton:hover {
+    text-decoration: underline;
+}
+
+/* Animation on hover */
+.cardArticle:hover .cardData {
+    animation: show-data 1s forwards;
+    opacity: 1;
+    transition: opacity .3s;
+}
+
+.cardArticle:hover {
+    animation: remove-overflow 2s forwards;
+}
+
+.cardArticle:not(:hover) {
+    animation: show-overflow 2s forwards;
+}
+
+.cardArticle:not(:hover) .cardData {
+    animation: remove-data 1s forwards;
+}
+
+/* Card Animations */
+@keyframes show-data {
+    50% {
+        transform: translateY(-10rem);
+    }
+    100% {
+        transform: translateY(-7rem);
+    }
+}
+
+@keyframes remove-overflow {
+    to {
+        overflow: initial;
+    }
+}
+
+@keyframes remove-data {
+    0% {
+        transform: translateY(-7rem);
+    }
+    50% {
+        transform: translateY(-10rem);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes show-overflow {
+    0% {
+        overflow: initial;
+        pointer-events: none;
+    }
+    50% {
+        overflow: hidden;
+    }
+}
+
+/* ============== BreakPoints ============== */
+/* For small devices */
+@media screen and (max-width: 340px) {
+    .Trade {
+        margin-inline: 1rem;
+    }
+
+    .cardData {
+        width: 250px;
+        padding: 1rem;
+    }
+}
+
+/* For medium devices */
+@media screen and (min-width: 768px) {
+    .cardContainer {
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 1.5rem;
+    }
+}
+
+/* For large devices */
+@media screen and (min-width: 1120px) {
+    .Trade {
+        height: 100vh;
+    }
+
+    .cardContainer {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .cardImage {
+        width: 348px;
+    }
+    .cardData {
+        width: 316px;
+        padding-inline: 2.5rem;
+    }
+}
