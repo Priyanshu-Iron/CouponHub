@@ -1,0 +1,153 @@
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100vh;
+    overflow-x: hidden;
+}
+
+.pacifico-regular {
+    font-family: "Pacifico", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.afacad-flux-navbarText {
+    font-family: "Afacad Flux", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings: "slnt" 0;
+}
+
+.merienda-HeadingFont {
+    font-family: "Merienda", cursive;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 70px;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    max-width: 100vw;
+    z-index: 10000;
+}
+
+#logo {
+    margin: 30px;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #FF6500;
+    font-family: "Pacifico", cursive;
+}
+
+/* Wrapper for input and mic icon */
+.input-wrapper {
+    position: relative;
+    width: 600px;
+}
+
+nav input[type=text] {
+    padding: 10px;
+    font-size: 20px;
+    border-radius: 30px;
+    background-color: #F0F0F0;
+    font-family: "Afacad Flux", sans-serif;
+    background-position: 10px center;
+    padding-left: 50px; /* Space for the search icon */
+    padding-right: 50px; /* Space for the tune icon */
+    border: none;
+    width: 100%;
+    outline: 1.5px solid #FF6500;
+}
+
+/* Search icon on the left */
+.search-icon {
+    background: url("/Assets/Icons/search.png") no-repeat left center;
+    background-size: 20px;
+}
+
+.search-icon:hover{
+    color: #FF6500;
+}
+
+.tune-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background: url("/Assets/Icons/tune.png") no-repeat center center;
+    background-size: 20px;
+    pointer-events: none;
+    padding-right: 50px;
+}
+
+.icon-container {
+    display: flex;
+    gap: 40px; /* Adjust the gap between icons */
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.icon {
+    width: 25px;
+    height: 25px;
+    background-size:27px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-position: center;
+    outline: 1.5px solid #FF6500;
+}
+
+.lightMode, .notification, .setting, .user {
+    background-color: #F0F0F0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon:hover{
+    background-color: #FF6500;
+}
+
+.lightMode {
+    background-image: url("/Assets/Icons/bright.png");
+}
+
+.notification {
+    background-image: url("/Assets/Icons/notification.png");
+}
+
+.setting{
+    background-image: url("Assets/Icons/setting.png");
+}
+
+.user{
+    background-image: url("Assets/Icons/user.png");
+}
