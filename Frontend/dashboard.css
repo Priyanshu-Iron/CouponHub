@@ -8,12 +8,21 @@ html {
     box-sizing: border-box;
 }
 
+/* Dark Mode */
 body {
     padding: 0;
     margin: 0;
     width: 100%;
     height: 100vh;
     overflow-x: hidden;
+    background-color: white;
+    color: black;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+body.dark-mode {
+    background-color: #0B192C;
+    color: white;
 }
 
 .pacifico-regular {
@@ -65,7 +74,8 @@ nav {
 /* Wrapper for input and mic icon */
 .input-wrapper {
     position: relative;
-    width: 600px;
+    width: 500px;
+    justify-content: space-between;
 }
 
 nav input[type=text] {
@@ -84,7 +94,7 @@ nav input[type=text] {
 
 /* Search icon on the left */
 .search-icon {
-    background: url("/Assets/Icons/search.png") no-repeat left center;
+    background: url("/Frontend/Assets/Icons/search.png") no-repeat left center;
     background-size: 20px;
 }
 
@@ -99,7 +109,7 @@ nav input[type=text] {
     transform: translateY(-50%);
     width: 20px;
     height: 20px;
-    background: url("/Assets/Icons/tune.png") no-repeat center center;
+    background: url("/Frontend/Assets/Icons/tune.png") no-repeat center center;
     background-size: 20px;
     pointer-events: none;
     padding-right: 50px;
@@ -110,6 +120,7 @@ nav input[type=text] {
     gap: 40px; /* Adjust the gap between icons */
     align-items: center;
     justify-content: space-evenly;
+    margin-left: 10px;
 }
 
 .icon {
@@ -122,7 +133,7 @@ nav input[type=text] {
     outline: 1.5px solid #FF6500;
 }
 
-.lightMode, .notification, .setting, .user {
+.lightMode, .darkMode, .notification, .setting, .user {
     background-color: #F0F0F0;
     border-radius: 50%;
     width: 40px;
@@ -136,18 +147,105 @@ nav input[type=text] {
     background-color: #FF6500;
 }
 
-.lightMode {
-    background-image: url("/Assets/Icons/bright.png");
-}
+/* .lightMode {
+    background-image: url("/Frontend/Assets/Icons/bright.png");
+} */
 
 .notification {
-    background-image: url("/Assets/Icons/notification.png");
+    background-image: url("/Frontend/Assets/Icons/notification.png");
 }
 
 .setting{
-    background-image: url("Assets/Icons/setting.png");
+    background-image: url("/Frontend/Assets/Icons/Movingsettings.png");
 }
 
 .user{
-    background-image: url("Assets/Icons/user.png");
+    background-image: url("/Frontend/Assets/Icons/user.png");
+}
+
+button {
+    border: none; /* Remove border */
+    position: relative; /* To position the icon */
+}
+
+/* Light mode icon */
+.lightMode:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    background-image: url("/Frontend/Assets/Icons/bright.png"); /* Light mode icon */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Dark mode icon when the button has 'darkMode' class */
+.darkMode:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    background-image: url("/Frontend/Assets/Icons/darkMode.png"); /* Dark mode icon */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Dark mode styling for nav */
+body.dark-mode nav {
+    background-color: #1A253A; /* Darker color for navbar in dark mode */
+}
+
+body.dark-mode input[type=text] {
+    background-color: #2B3A50; /* Darker input background in dark mode */
+    color: #FFFFFF;
+    outline: 1.5px solid #FF6500; /* Lighter orange outline in dark mode */
+}
+
+/* Adjust icons for dark mode */
+body.dark-mode .icon {
+    background-color: #FF6500; /* Darker icon background */
+    outline-color: #FFB74D; /* Lighter orange for dark mode */
+}
+
+
+/* ----------------------------- User Icon ----------------------------- */
+.user{
+    position: relative;
+    display: inline-block;
+}
+
+.usersData {
+    display: none; 
+    position: absolute;
+    top: 110%; /* Position it below the user icon */
+    left: -60%;
+    background-color: #fff; /* Background color of the dropdown */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Optional shadow */
+    list-style-type: none;
+    padding: 10px;
+    margin: 0;
+    z-index: 1;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.usersData li {
+    margin: 5px 0;
+}
+
+.usersData li a {
+    text-decoration: none;
+    font-family: "Afacad Flux", sans-serif;
+    color: #1A253A;
+    font-size: 18px;
+    /* text-decoration: underline; */
+}
+
+.usersData li a:hover{
+    color: #FF6500;
+    text-decoration: underline;
 }
