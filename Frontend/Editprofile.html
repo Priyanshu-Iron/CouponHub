@@ -31,12 +31,12 @@
 
             <div class="otp-section" id="otpSection">
                 <label for="otp">Enter OTP:</label>
-                <input type="text" id="otp" class="otp-input" required>
+                <input type="text" id="otp" class="otp-input" placeholder="Enter Recieved OTP" required>
                 <button type="button" class="otp-button" onclick="verifyOTP()">Verify OTP</button>
             </div>
 
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
             <label for="profilePicture">Profile Picture:</label>
             <input type="file" id="profilePicture" name="profilePicture" accept="image/*" placeholder="Optional">
@@ -50,7 +50,9 @@
             <label for="city">City:</label>
             <input type="text" id="city" name="city" placeholder="Optional">
 
-            <button type="submit" id="submitButton" disabled>Register</button>
+            <div class="button-container">
+                <button type="submit" id="submitButton" disabled>Register</button>
+            </div>
         </form>
     </div>
 
