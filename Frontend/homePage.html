@@ -24,7 +24,15 @@
             <li><a href="https://github.com/Priyanshu-Iron/CouponHub" id="links">Github</a></li>
         </ul>
 
-        <a href="#getStarted" id="getStarted">Get Started</a>
+        <div class="LoginAndSignup">
+            <!-- <div class="GS" onclick="toggleMenu()">
+                <a href="#getStarted" id="getStarted">Get Started</a>
+            </div> -->
+            <div class="LoginAndSignupSub">
+                <a href="#Login" id="login">Login</a>
+                <a href="#Signup" id="Signup">Signup</a>
+            </div>
+        </div>
 
         <div class="burger">
             <div class="line1"></div>
@@ -32,6 +40,27 @@
             <div class="line3"></div>
         </div>
     </nav>
+
+    <div class="container">  
+        <div id="Login" class="login">  
+         <h2>Login</h2>  
+         <form>  
+           <div class="form-group">    
+            <input type="text" id="username" name="username" placeholder="Enter username">  
+           </div>  
+           <div class="form-group">    
+            <input type="password" id="password" name="password" placeholder="Enter password">  
+           </div>  
+           <div class="form-group">  
+            <input type="checkbox" id="remember-me" name="remember-me">  
+            <label for="remember-me">Remember me</label>
+            <a class="forget" href="#">Forgot Password?</a>  
+           </div>  
+           <button type="submit">Login</button>  
+           <p>Don't have an account? <a class="forget" href="#">Register</a></p>  
+         </form>  
+        </div>  
+    </div>
 
     <div id="top">
         <div id="nameDiv">
@@ -135,6 +164,8 @@
             anchorPlacement: 'top-center',  // Position the animation starts
         });
     </script>
+
+
 
 </body>
 </html>

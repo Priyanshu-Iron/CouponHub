@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:slnt,wght@1,100..1000&family=Merienda:wght@300..900&family=Pacifico&display=swap" rel="stylesheet">
+    <title>CouponHub Registration Form</title>
+    <link rel="stylesheet" href="/Frontend/Editprofile.css">
+</head>
+<body>
+    <div class="container">
+        <div class="heading">
+            <h1>Register for</h1>
+            <h1 id="CouponHubLogo">CouponHub</h1>
+        </div>
+        <form id="registrationForm" action="/submit" method="POST" onsubmit="return handleFormSubmit(event)">
+            <div class="upload-background">
+                <label for="bgImage">Upload Background Image:</label>
+                <input type="file" id="bgImage" class="bgUploadButton" name="bgImage" accept="image/*" onchange="previewImage(event)" hidden/>
+            </div>
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" name="fullName" placeholder="Enter your Full Name" required>
+
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your Email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+
+            <div class="otp-section" id="otpSection">
+                <label for="otp">Enter OTP:</label>
+                <input type="text" id="otp" class="otp-input" required>
+                <button type="button" class="otp-button" onclick="verifyOTP()">Verify OTP</button>
+            </div>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="profilePicture">Profile Picture:</label>
+            <input type="file" id="profilePicture" name="profilePicture" accept="image/*" placeholder="Optional">
+
+            <label for="bio">Bio:</label>
+            <textarea id="bio" name="bio" rows="4" placeholder="Optional"></textarea>
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" placeholder="Optional">
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" placeholder="Optional">
+
+            <button type="submit" id="submitButton" disabled>Register</button>
+        </form>
+    </div>
+
+    <script>
+        // function previewImage(event) {
+        //     const body = document.body;
+        //     const file = event.target.files[0];
+        //     const reader = new FileReader();
+        //     reader.onload = function(e) {
+        //         body.style.backgroundImage = `url(${e.target.result})`;
+        //     };
+        //     reader.readAsDataURL(file);
+        // }
+
+        function handleFormSubmit(event) {
+            event.preventDefault(); // Prevent the default form submission
+            const phone = document.getElementById('phone').value;
+            sendOTP(phone); // Send OTP to the provided phone number
+            document.getElementById('otpSection').style.display = 'block'; // Show OTP section
+        }
+
+        function sendOTP(phone) {
+            // Placeholder for sending OTP logic
+            alert(`OTP sent to ${phone}`);
+            // After sending OTP, enable the submit button
+            document.getElementById('submitButton').disabled = false;
+        }
+
+        function verifyOTP() {
+            const otpInput = document.getElementById('otp').value;
+            // Placeholder for verifying OTP logic
+            alert(`OTP ${otpInput} verified!`);
+            document.getElementById('submitButton').disabled = false; // Enable submit button
+        }
+    </script>
+</body>
+</html>

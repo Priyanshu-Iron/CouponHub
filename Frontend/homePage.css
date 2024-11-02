@@ -111,6 +111,13 @@ nav ul li{
     left: 0;
 }
 
+.LoginAndSignup{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 30px;
+}
+
 #getStarted{
     text-decoration: none;
     font-family: "Afacad Flux", sans-serif;
@@ -120,14 +127,46 @@ nav ul li{
     font-weight: bold;
     text-transform: uppercase;
     border-radius: 15px;
-    padding: 10px;
+    padding: 10px 12px 8px; 
     display: inline-block;
-    margin: 30px;
+    margin: 0px 30px 2px 30px;
     border: 2px solid transparent;
     border: #1E3E62;
 }
 
 #getStarted:hover{
+    background-color: #FF6500;
+}
+
+.LoginAndSignupSub{
+    /* padding: 10px 20px ; */
+    border-radius: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#login, #Signup{
+    text-decoration: none;
+    font-size: 20px;
+    letter-spacing: 2px;
+    font-family: "Afacad Flux", sans-serif;
+    color: #1E3E62;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 18px;
+    padding:8px; 
+    display: inline-block;
+    border: 2px solid transparent;
+    align-items: center;
+    justify-content: center;
+}
+
+#login:hover{
+    background-color: #FF6500;
+    cursor: pointer;
+}
+#Signup:hover{
     background-color: #FF6500;
 }
 
@@ -222,7 +261,7 @@ h1{
     width: 100vw; /* Ensure full viewport width without overflow */
     max-width: 100%; /* Prevent horizontal scroll */
     /* min-height: 100vh; Ensure the section takes up the full viewport height */
-    padding: 30px;
+    padding: 0px;
     margin: 0 auto; /* Center the content */
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
@@ -541,3 +580,96 @@ h1{
     background-image: linear-gradient(75deg,#1E3E62, #000000, #0B192C);
 }
 
+/* Login Form */
+.container {
+    display: none;
+    width: 30rem;
+    position: fixed;  
+    top: 50%;  
+    left: 50%;  
+    transform: translate(-50%, -50%);  
+    text-align: center; 
+    background: rgba(255, 255, 255, 0.19);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8.1px);
+    -webkit-backdrop-filter: blur(8.1px);
+    border: 1px solid rgba(255, 255, 255, 0.28); 
+  }  
+    
+  .login {
+    height: 30em;
+    background-color: transparent; 
+    padding: 20px;  
+    border-radius: 10px;  
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);  
+  }  
+    
+  .login h2 {  
+    font-size: 3rem;
+    color: #1E3E62;  
+    margin-bottom: 20px;
+    font-family: 'Poppins',sans-serif;  
+  }  
+    
+  .form-group { 
+    font-size: 1.2rem;
+    font-family: 'Poppin'sans-serif;
+    display: flex; 
+    margin: 10px 30px;
+    margin-bottom: 20px;  
+  }    
+   
+  .form-group input[type="text"], .form-group input[type="password"] {  
+    width: 100%;  
+    padding: 15px; 
+    font-family: 'Poppins',sans-serif;
+    font-size: 15px;
+    border: none;  
+    border-radius: 5rem;  
+    background-color: trans;  
+    padding-right: 1px;
+  }  
+    
+  .form-group input[type="checkbox"] {  
+    margin-right: 10px;  
+  }  
+    
+  button[type="submit"] {  
+    background-color: #FF6500;  
+    color: #fff;
+    font-family: 'Poppin'sans-serif;
+    font-size: 1.5rem;  
+    padding: 10px 170px;  
+    border: none;  
+    border-radius: 5rem;  
+    cursor: pointer; 
+
+  }  
+    
+  button[type="submit"]:hover {  
+    background-color: #3e8e41;  
+  }  
+    
+  p {  
+    color: #1E3E62;  
+    margin-top: 20px;
+    font-family: 'Poppin',sans-serif; 
+    font-size: 1.3rem; 
+  }  
+    
+  /* a{  
+    color: #4CAF50;  
+    text-decoration: none;  
+  }  
+    
+  a:hover {  
+    color: #3e8e41;  
+  } */
+  .forget{
+    margin-left:  6rem;
+  }
+
+.active {
+    display: block;
+    }
