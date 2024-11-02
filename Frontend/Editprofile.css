@@ -52,7 +52,7 @@ body{
     display: none;
 }
 
-.bgUploadButton{
+.bgUploadButton, .profilePicture{
     display: inline-block;
     padding: 10px;
     background-color: #FF6500;
@@ -110,6 +110,8 @@ textarea{
     border-radius: 3px;
     border: none;
     text-decoration: none;
+    color: #FF6500;
+    font-size: 18px;
 }
 
 .button-container {
