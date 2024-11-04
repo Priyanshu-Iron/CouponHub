@@ -581,8 +581,11 @@ h1{
 }
 
 /* Login Form */
+ /* Login Form */
 .container {
     display: none;
+    visibility: hidden;
+    opacity: 0;
     width: 30rem;
     position: fixed;  
     top: 50%;  
@@ -595,97 +598,101 @@ h1{
     backdrop-filter: blur(8.1px);
     -webkit-backdrop-filter: blur(8.1px);
     border: 1px solid rgba(255, 255, 255, 0.28);
-  }  
-    
-  .login {
+    transition: visibility 0s, opacity 0.3s ease-in-out;
+}
+
+.container.active {
+    visibility: visible;
+    opacity: 1;
+    display: block;
+}
+  
+.login {
     height: 30em;
     background-color: transparent; 
     padding: 20px;  
     border-radius: 10px;  
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);  
-  }  
+}  
     
-  .login h2 {  
+.login h2 {  
     font-size: 3rem;
     color: #FF6500;  
     margin-bottom: 20px;
     font-family: "Afacad Flux", sans-serif;
-  }  
+}  
     
-  .form-group { 
+.form-group { 
     font-size: 1.2rem;
     font-family: "Afacad Flux", sans-serif;
     display: flex; 
     margin: 10px 30px;
     margin-bottom: 20px;  
-  }    
-   
-  .form-group input[type="text"], .form-group input[type="password"] {  
+}
+
+.form-group input[type="text"], .form-group input[type="password"] {  
     width: 100%;  
     padding: 15px; 
     font-family: "Afacad Flux", sans-serif;
     font-size: 20px;
     border: none;  
     border-radius: 5rem;  
-    background-color: trans;  
+    background-color: transparent;  
     padding-right: 1px;
     color: #1E3E62;
     outline: none;
     font-weight: 500;
-  }  
-    
-  .form-group input[type="checkbox"] {  
+    border-bottom: 2px solid;
+    border-radius: 0;
+}  
+
+.form-group.checkbox-group { 
+    display: flex; 
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 30px 20px;
+}
+
+.form-group input[type="checkbox"] {  
     margin-right: 10px;  
-  }  
+}  
     
-  button[type="submit"] {  
+button[type="submit"] {  
     background-color: #FF6500;  
     color: #fff;
     font-family: "Afacad Flux", sans-serif;
     font-size: 1.5rem;  
-    padding: 10px 170px;  
+    padding: 10px 20%;  
     border: none;  
     border-radius: 5rem;  
     cursor: pointer; 
+}
 
-  }  
-    
-  button[type="submit"]:hover {  
-    background-color: #3e8e41;  
-  }  
-    
-  p {  
+button[type="submit"]:hover {  
+    background-color: #e65500;  
+}  
+
+p {  
     color: #1E3E62;  
     margin-top: 20px;
     font-family: "Afacad Flux", sans-serif;
     font-size: 1.3rem; 
-  }  
+}  
 
-  ::placeholder{
+::placeholder {
     font-family: "Afacad Flux", sans-serif;
     font-size: 20px;
     font-weight: 500;
     color: #1E3E62;
-  }
-    
-  /* a{  
-    color: #4CAF50;  
-    text-decoration: none;  
-  }  
-    
-  a:hover {  
-    color: #3e8e41;  
-  } */
-  .forget{
-    margin-left:  6rem;
+}
+
+.forget {
+    margin-left: 6rem;
     text-decoration: none;
     color: #FF6500;
-  }
+}
 
-  .forget:hover{
-    text-decoration:  3px #0B192C underline;
-  }
-
-.active {
-    display: block;
+.forget:hover {
+    text-decoration: underline;
+    color: #0B192C;
 }

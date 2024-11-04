@@ -23,14 +23,14 @@ const generateAccessAndRefereshTokens = async(userId)=>{
 
 const registerUser = asyncHandler( async(req,res) => {
     
-    const {fullName, email, username, password,mobileNumber,address} = req.body
+    const {fullName, email, username, password,mobileNumber,address,bio,city} = req.body
     // console.log("email : ", email);
     // console.log("password : ", password);
     // console.log("fullName : ", fullName);
     // console.log("username : ", username);
 
     if (
-        [fullName,email,username,password,mobileNumber,address].some((field)=>field?.trim() === "")
+        [fullName,email,username,password,mobileNumber,address,bio,city].some((field)=>field?.trim() === "")
     ) {
         throw new ApiError(400, "All Fields are required")
     }
@@ -72,6 +72,8 @@ const registerUser = asyncHandler( async(req,res) => {
         password,
         mobileNumber,
         address,
+        bio,
+        city,
         username : username.toLowerCase()
     })
 
@@ -84,7 +86,7 @@ const registerUser = asyncHandler( async(req,res) => {
     }
 
     return res.status(201).json(
-        new ApiResponse (200, createdUser, "User Registered Successfully")
+        new ApiResponse (200, true, createdUser, "User Registered Successfully")
     )
 
 } )
@@ -118,12 +120,12 @@ const loginUser = asyncHandler(async (req,res) => {
 
     const options = {
         httpOnly : true,
-        secure : true
+        secure : false
     }
 
     return res.status(200)
-    .cookies("accessToken",accessToken,options)
-    .cookies("refreshToken",refreshToken,options)
+    .cookie("accessToken",accessToken,options)
+    .cookie("refreshToken",refreshToken,options)
     .json(
         new ApiResponse(
             200,

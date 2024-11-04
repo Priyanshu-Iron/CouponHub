@@ -43,23 +43,26 @@
 
     <div class="container">  
         <div id="Login" class="login">  
-         <h2>Login</h2>  
-         <form>  
-           <div class="form-group">    
-            <input type="text" id="username" name="username" placeholder="Enter username or Email">  
-           </div>  
-           <div class="form-group">    
-            <input type="password" id="password" name="password" placeholder="Enter password">  
-           </div>  
-           <div class="form-group">  
-            <input type="checkbox" id="remember-me" name="remember-me">  
-            <label for="remember-me">Remember me</label>
-            <a class="forget" href="#">Forgot Password?</a>  
-           </div>  
-           <button type="submit">Login</button>  
-           <p>Don't have an account? <a class="forget" href="/Frontend/register.html">Register</a></p>  
-         </form>  
+            <h2>Login</h2>  
+            <form id="registrationForm" action="/login" method="POST" onsubmit="return handleFormSubmit(event)">
+                <div class="form-group">    
+                    <input type="text" id="username" name="username" placeholder="Enter username or Email" autocomplete="username">  
+                </div>  
+                <div class="form-group">    
+                    <input type="password" id="password" name="password" placeholder="Enter password" autocomplete="current-password">  
+                </div>  
+                <div class="form-group">  
+                    <input type="checkbox" id="remember-me" name="remember-me">  
+                    <label for="remember-me">Remember me</label>
+                    <a class="forget" href="#">Forgot Password?</a>  
+                </div>  
+                <button type="submit">Login</button>  
+                <p>Don't have an account? <a class="forget" href="/Frontend/register.html">Register</a></p>  
+            </form>  
         </div>  
+    </div>
+    
+         
     </div>
 
     <div id="top">
@@ -154,8 +157,7 @@
         </div>
     </footer>
 
-    <!-- Initialize AOS with smoother animations -->
-    <script src="j.js"></script> 
+    <!-- Initialize AOS with smoother animations --> 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
         AOS.init({
@@ -166,12 +168,51 @@
         });
     </script>
 
-    <script>
-        let login = document.querySelector('.container');
-        document.querySelector('#login').onclick = () =>
-        {
-            login.classList.toggle('active');
+    
+
+<script>
+    async function handleFormSubmit(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const formData = {
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value
+        };
+
+        try {
+            const response = await fetch('http://localhost:8000/api/v1/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                const errorResult = await response.json();
+                alert("Login failed: " + errorResult.message);
+                return;
+            }
+
+            const result = await response.json();
+            
+            if (result.success) {
+                alert("Login successful!");
+                window.location.href = '/Frontend/dashBoard.html';
+            } else {
+                alert("Login failed: " + result.message);
+            }
+        } catch (error) {
+            console.error("Error submitting the form:", error);
         }
-    </script>
+    }
+
+    // Show Login form on click
+    document.querySelector('#login').onclick = (event) => {
+    event.preventDefault(); // Prevent link from navigating
+    document.querySelector('.container').classList.toggle('active');
+};
+</script>
+
 </body>
 </html>

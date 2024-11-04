@@ -31,9 +31,13 @@ const userSchema = new Schema(
       trim: true
     },
     address: {
-      type: String
+      type: String,
+      required: true
     },
     bio: {
+      type: String
+    },
+    city: {
       type: String
     },
     avatar: {
@@ -77,7 +81,9 @@ userSchema.methods.generateAccessToken = function () {
       fullName: this.fullName,
       mobileNumber: this.mobileNumber,
       address: this.address,
-      bio: this.bio
+      bio: this.bio,
+      address: this.address,
+      city: this.city
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
