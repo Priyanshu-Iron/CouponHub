@@ -91,57 +91,112 @@ const registerUser = asyncHandler( async(req,res) => {
 
 } )
 
-const loginUser = asyncHandler(async (req,res) => {
-    
-    console.log("Received request body:", req.body);
-    
-    const {email, username, password} = req.body
 
-    if (!username && !email) {
-        return res.status(400).json({ message: "Username or email is required" });
-    }    
+const loginUser = asyncHandler(async (req, res) => {
+    console.log(req.body);
+
+    const { usernameOrEmail, password } = req.body;
+
+    if (!usernameOrEmail) {
+        throw new ApiError(400, "Username or email is required");
+    }
+
+    // Use a regex to check if the input is an email
+    const isEmail = /\S+@\S+\.\S+/;
 
     const user = await User.findOne({
-        $or : [{username},{email}]
-    })
+        $or: [
+            { username: usernameOrEmail },
+            { email: isEmail.test(usernameOrEmail) ? usernameOrEmail : undefined }
+        ]
+    });
 
     console.log("Login route reached");
 
     if (!user) {
-        throw new ApiError(404,"User Not Found");
-        
+        throw new ApiError(404, "User Not Found");
     }
 
-    const isPasswordValid = await user.isPasswordCorrect(password)
+    const isPasswordValid = await user.isPasswordCorrect(password);
 
     if (!isPasswordValid) {
-        throw new ApiError(401,"Invalid user credentials");
+        throw new ApiError(401, "Invalid user credentials");
     }
 
-    const {accessToken,refreshToken} = await generateAccessAndRefereshTokens(user._id)
+    const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id);
 
-    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
     const options = {
-        httpOnly : true,
-        secure : false
-    }
-    
+        httpOnly: true,
+        secure: false
+    };
 
     return res.status(200)
-    .cookie("accessToken",accessToken,options)
-    .cookie("refreshToken",refreshToken,options)
-    .json(
-        new ApiResponse(
-            200,
-            {
-                user : loggedInUser,accessToken,refreshToken,
-            },
-            "User looged In Successfully"
-        )
-    )
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new ApiResponse(
+                200,
+                {
+                    user: loggedInUser, accessToken, refreshToken,
+                },
+                "User logged In Successfully"
+            )
+        );
+});
 
-})
+// const loginUser = asyncHandler(async (req,res) => {
+    
+//     console.log("Received request body:", req.body);
+    
+//     const {email, username, password} = req.body
+
+//     if (!username && !email) {
+//         return res.status(400).json({ message: "Username or email is required" });
+//     }    
+
+//     const user = await User.findOne({
+//         $or : [{username},{email}]
+//     })
+
+//     console.log("Login route reached");
+
+//     if (!user) {
+//         throw new ApiError(404,"User Not Found");
+        
+//     }
+
+//     const isPasswordValid = await user.isPasswordCorrect(password)
+
+//     if (!isPasswordValid) {
+//         throw new ApiError(401,"Invalid user credentials");
+//     }
+
+//     const {accessToken,refreshToken} = await generateAccessAndRefereshTokens(user._id)
+
+//     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+
+//     const options = {
+//         httpOnly : true,
+//         secure : false
+//     }
+    
+
+//     return res.status(200)
+//     .cookie("accessToken",accessToken,options)
+//     .cookie("refreshToken",refreshToken,options)
+//     .json(
+//         new ApiResponse(
+//             200,
+//             {
+//                 user : loggedInUser,accessToken,refreshToken,
+//             },
+//             "User looged In Successfully"
+//         )
+//     )
+
+// })
 
 const logoutUser = asyncHandler(async(req,res)=>{
     await User.findByIdAndUpdate(

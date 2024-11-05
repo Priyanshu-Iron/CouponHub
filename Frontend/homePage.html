@@ -174,16 +174,17 @@
     async function handleFormSubmit(event) {
     event.preventDefault(); // Prevent default form submission
 
-    const username = document.getElementById('username').value;
+    const usernameOrEmail = document.getElementById('username').value; // Capture username or email
     const password = document.getElementById('password').value;
 
-    if (!username || !password) {
+    // Check if both fields are filled
+    if (!usernameOrEmail || !password) {
         alert("Both username/email and password are required.");
         return;
     }
 
-    // Create JSON payload
-    const payload = JSON.stringify({ username, password });
+    // Create JSON payload, using a more generic key
+    const payload = JSON.stringify({ usernameOrEmail, password });
 
     try {
         const response = await fetch('http://localhost:8000/api/v1/users/login', {
@@ -212,7 +213,6 @@
         console.error("Error submitting the form:", error);
     }
 }
-
 
 
     // Show Login form on click
