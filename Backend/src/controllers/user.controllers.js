@@ -93,15 +93,19 @@ const registerUser = asyncHandler( async(req,res) => {
 
 const loginUser = asyncHandler(async (req,res) => {
     
+    console.log("Received request body:", req.body);
+    
     const {email, username, password} = req.body
 
     if (!username && !email) {
-        throw new ApiError(400, "Username or email is required")
-    }
+        return res.status(400).json({ message: "Username or email is required" });
+    }    
 
     const user = await User.findOne({
         $or : [{username},{email}]
     })
+
+    console.log("Login route reached");
 
     if (!user) {
         throw new ApiError(404,"User Not Found");
@@ -122,6 +126,7 @@ const loginUser = asyncHandler(async (req,res) => {
         httpOnly : true,
         secure : false
     }
+    
 
     return res.status(200)
     .cookie("accessToken",accessToken,options)

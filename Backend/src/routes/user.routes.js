@@ -3,6 +3,9 @@ import { loginUser,logoutUser,registerUser,refreshAccessToken} from "../controll
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
+
+console.log("Router initialized");
+
 const router = Router()
 
 router.route("/register").post(
