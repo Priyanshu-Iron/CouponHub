@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "notie": "^4.3.1",
+    "toastify-js": "^1.12.0"
+  }
+}

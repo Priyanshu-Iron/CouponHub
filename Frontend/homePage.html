@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:slnt,wght@1,100..1000&family=Merienda:wght@300..900&family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="homePage.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>CouponHub</title>
 </head>
@@ -60,9 +61,6 @@
                 <p>Don't have an account? <a class="forget" href="/Frontend/register.html">Register</a></p>  
             </form>  
         </div>  
-    </div>
-    
-         
     </div>
 
     <div id="top">
@@ -168,8 +166,6 @@
         });
     </script>
 
-    
-
 <script>
     async function handleFormSubmit(event) {
     event.preventDefault(); // Prevent default form submission
@@ -179,7 +175,7 @@
 
     // Check if both fields are filled
     if (!usernameOrEmail || !password) {
-        alert("Both username/email and password are required.");
+        showToast("Both username/email and password are required.", "error");
         return;
     }
 
@@ -197,30 +193,48 @@
 
         if (!response.ok) {
             const errorResult = await response.json();
-            alert("Login failed: " + errorResult.message);
+            showToast("Login failed: " + errorResult.message, "error");
             return;
         }
 
         const result = await response.json();
 
         if (result.success) {
-            alert("Login successful!");
-            window.location.href = '/Frontend/dashBoard.html';
+            showToast("Login successful!", "success");
+            
+            // Delay the redirection by 2 seconds
+            setTimeout(() => {
+                window.location.href = '/Frontend/dashBoard.html';
+            }, 2000); // 2000ms = 2 seconds
         } else {
-            alert("Login failed: " + result.message);
+            showToast("Login failed: " + result.message, "error");
         }
     } catch (error) {
         console.error("Error submitting the form:", error);
+        showToast("An error occurred. Please try again later.", "error");
     }
 }
 
+// Function to show toast notifications
+function showToast(message, type) {
+    Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top", // Top, bottom
+        position: "center", // Left, center, right
+        backgroundColor: type === "success" ? "green" : "red",
+        stopOnFocus: true, // Prevents dismissing on hover
+    }).showToast();
+}
 
-    // Show Login form on click
-    document.querySelector('#login').onclick = (event) => {
+// Show Login form on click
+document.querySelector('#login').onclick = (event) => {
     event.preventDefault(); // Prevent link from navigating
     document.querySelector('.container').classList.toggle('active');
 };
+
 </script>
 
 </body>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </html>

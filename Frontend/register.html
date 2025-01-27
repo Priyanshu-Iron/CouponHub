@@ -6,85 +6,135 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:slnt,wght@1,100..1000&family=Merienda:wght@300..900&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <title>CouponHub Registration Form</title>
     <link rel="stylesheet" href="/Frontend/register.css">
 </head>
 <body>
     <div class="container">
-        <div class="heading">
-            <h1>Register for</h1>
-            <h1 id="CouponHubLogo">CouponHub</h1>
-        </div>
-        <form id="registrationForm" action="/register" method="POST" onsubmit="return handleFormSubmit(event)">
-            <div class="upload-background">
-                <label for="coverImage">Upload Background Image:</label>
-                <input type="file" id="coverImage" class="bgUploadButton" name="coverImage" accept="image/*" onchange="previewImage(event)" hidden/>
+        <div>
+            <a href="/Frontend/homePage.html">
+                <i class="fa fa-arrow-circle-left" style="font-size:60px; color:#FF6500;"></i>
+            </a>              
+            <div class="heading">
+                <h1>Register for</h1>
+                <h1 id="CouponHubLogo">CouponHub</h1>
             </div>
-        
+        </div>
+        <form id="registrationForm" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
+            <!-- <div class="upload-background">
+                <label for="coverImage">Upload Background Image:</label>
+                <input type="file" id="coverImage" class="bgUploadButton" name="coverImage" accept="image/*" hidden onchange="previewImage(event)" />
+            </div>             -->
+
             <label for="fullName">Full Name:</label>
             <input type="text" id="fullName" name="fullName" placeholder="Enter your Full Name" required autocomplete="name">
-        
-            <label for="username">UserName:</label>
-            <input type="text" id="username" name="username" placeholder="Create UserName" required autocomplete="username">
-        
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Create Username" required autocomplete="username">
+
             <label for="email">Email Address:</label>
             <input type="email" id="email" name="email" placeholder="Enter your Email" required autocomplete="email">
-        
+
             <label for="mobileNumber">Phone Number:</label>
             <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="Enter your phone number" required autocomplete="tel">
-        
+
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="new-password">
-        
-            <label for="avatar">Profile Picture:</label>
-            <input type="file" id="avatar" name="avatar" accept="image/*" placeholder="Optional">
-        
+
+            <!-- <label for="avatar">Profile Picture:</label>
+            <input type="file" id="avatar" name="avatar" accept="image/*" placeholder="Optional" onchange="previewImage(event)"> -->
+
             <label for="bio">Bio:</label>
             <textarea id="bio" name="bio" rows="4" placeholder="Optional"></textarea>
-        
+
             <label for="address">Address:</label>
             <input type="text" id="address" name="address" placeholder="Optional" autocomplete="address-line1">
-        
+
             <label for="city">City:</label>
             <input type="text" id="city" name="city" placeholder="Optional" autocomplete="address-level2">
-        
+
             <div class="button-container">
                 <button type="submit" id="submitButton">Register</button>
             </div>
         </form>
-        
     </div>
 
     <script>
-        async function handleFormSubmit(event) {
-            event.preventDefault(); // Prevent the default form submission
+    async function handleFormSubmit(event) {
+        event.preventDefault();
 
-            const formData = new FormData(document.getElementById('registrationForm')); // Collect form data
+        const formData = new FormData(document.getElementById('registrationForm'));
 
-            try {
-                const response = await fetch('http://localhost:8000/api/v1/users/register', {
-                    method: 'POST',
-                    body: formData // Send form data
-                });
+        try {
+            const response = await fetch('http://localhost:8000/api/v1/users/register', {
+                method: 'POST',
+                body: formData,
+            });
 
-                if (!response.ok) {
-                    const errorResult = await response.json();
-                    alert("Registration failed: " + errorResult.message);
-                    return;
-                }
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert("Registration successful!"); // Show success message
-                    window.location.href = 'Frontend/dashBoard.html';
-                } else {
-                    alert("Registration failed: " + result.message); // Show error message
-                }
-            } catch (error) {
-                console.error("Error submitting the form:", error);
+            if (!response.ok) {
+                const errorResult = await response.json();
+                showToast("Registration failed: " + errorResult.message, "error");
+                return;
             }
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast("Registration successful!", "success");
+
+                // Redirect to the dashboard after a short delay
+                setTimeout(() => {
+                    window.location.href = "/Frontend/dashBoard.html";
+                }, 2000);
+            } else {
+                showToast("Registration failed: " + result.message, "error");
+            }
+        } catch (error) {
+            console.error("Error submitting the form:", error);
+            showToast("An error occurred. Please try again later.", "error");
         }
+    }
+
+    // Reuse the showToast function from your login script
+    function showToast(message, type) {
+        Toastify({
+            text: message,
+            duration: 3000,
+            gravity: "top", // Top or bottom
+            position: "center", // Left, center, or right
+            backgroundColor: type === "success" ? "green" : "red",
+            stopOnFocus: true, // Prevents dismissing on hover
+        }).showToast();
+    }
+
+
+
+        // Function to preview the uploaded image
+        // function previewImage(event) {
+        //     const file = event.target.files[0]; // Get the first file
+        //     const reader = new FileReader(); // Create a FileReader object
+
+        //     reader.onload = function(e) {
+        //         // Create an img element to display the preview
+        //         const imgElement = document.createElement("img");
+        //         imgElement.src = e.target.result; // Set the img src to the file data
+        //         imgElement.style.width = "10%"; // Optional: set width
+        //         imgElement.style.borderRadius = "8px"; // Optional: add some style
+
+        //         // Append the image to the container where you want to show it
+        //         const previewContainer = document.querySelector(".upload-background");
+        //         // Clear previous previews
+        //         previewContainer.innerHTML = "";
+        //         previewContainer.appendChild(imgElement);
+        //     };
+
+        //     if (file) {
+        //         reader.readAsDataURL(file); // Read the file as a Data URL
+        //     }
+        // }
     </script>
 </body>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </html>

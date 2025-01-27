@@ -4,7 +4,7 @@ import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 
-console.log("Router initialized");
+// console.log("Router initialized");
 
 const router = Router()
 

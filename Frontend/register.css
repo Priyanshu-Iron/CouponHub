@@ -115,6 +115,7 @@ textarea{
     text-decoration: none;
     color: #FF6500;
     font-size: 18px;
+    outline:none;
 }
 
 .button-container {

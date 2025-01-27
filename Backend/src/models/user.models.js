@@ -18,7 +18,8 @@ const userSchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
-    },
+      match: /.+\@.+\..+/ // Basic email validation regex
+    },    
     fullName: {
       type: String,
       required: true,
@@ -26,7 +27,7 @@ const userSchema = new Schema(
       index: true,
     },
     mobileNumber: {
-      type: Number,
+      type: String,
       required: true,
       trim: true
     },
@@ -40,13 +41,13 @@ const userSchema = new Schema(
     city: {
       type: String
     },
-    avatar: {
-      type: String, // Cloudinary URL
-      required: true,
-    },
-    coverImage: {
-      type: String, // Cloudinary URL
-    },
+    // avatar: {
+    //   type: String, // Cloudinary URL
+    //   required: true,
+    // },
+    // coverImage: {
+    //   type: String, // Cloudinary URL
+    // },
     password: {
       type: String,
       required: [true, 'Password is required'],
@@ -82,7 +83,6 @@ userSchema.methods.generateAccessToken = function () {
       mobileNumber: this.mobileNumber,
       address: this.address,
       bio: this.bio,
-      address: this.address,
       city: this.city
     },
     process.env.ACCESS_TOKEN_SECRET,
