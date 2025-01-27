@@ -1,5 +1,6 @@
 <!-- # CouponHub -->
-![Alt Text](https://res.cloudinary.com/dkslm53fp/image/upload/v1737990496/CouponHub/uyy5m4os5islybzaf6zd.png)
+<!-- ![Alt Text](https://res.cloudinary.com/dkslm53fp/image/upload/v1737990496/CouponHub/uyy5m4os5islybzaf6zd.png) -->
+<img src="https://res.cloudinary.com/dkslm53fp/image/upload/v1737990496/CouponHub/uyy5m4os5islybzaf6zd.png" width="50" height="50">
 
 ✨ **CouponHub** is a platform where users can buy, sell, and exchange coupons in an easy and efficient way. It allows users to list their unused coupons for others to purchase or exchange, creating a community-driven marketplace for deals and savings.
 
