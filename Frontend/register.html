@@ -63,39 +63,45 @@
 
     <script>
     async function handleFormSubmit(event) {
-        event.preventDefault();
+    event.preventDefault();
 
-        const formData = new FormData(document.getElementById('registrationForm'));
+    const formData = new FormData(document.getElementById('registrationForm'));
 
-        try {
-            const response = await fetch('http://localhost:8000/api/v1/users/register', {
-                method: 'POST',
-                body: formData,
-            });
+    try {
+        const response = await fetch('http://localhost:8000/api/v1/users/register', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include' // Important for cookies
+        });
 
-            if (!response.ok) {
-                const errorResult = await response.json();
-                showToast("Registration failed: " + errorResult.message, "error");
-                return;
-            }
-
-            const result = await response.json();
-
-            if (result.success) {
-                showToast("Registration successful!", "success");
-
-                // Redirect to the dashboard after a short delay
-                setTimeout(() => {
-                    window.location.href = "/Frontend/dashBoard.html";
-                }, 2000);
-            } else {
-                showToast("Registration failed: " + result.message, "error");
-            }
-        } catch (error) {
-            console.error("Error submitting the form:", error);
-            showToast("An error occurred. Please try again later.", "error");
+        if (!response.ok) {
+            const errorResult = await response.json();
+            showToast("Registration failed: " + errorResult.message, "error");
+            return;
         }
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Store user data if available in registration response
+            if (result.data) {
+                localStorage.setItem('userData', JSON.stringify(result.data));
+            }
+            
+            showToast("Registration successful!", "success");
+
+            // Redirect to login page instead of dashboard
+            setTimeout(() => {
+                window.location.href = "/Frontend/homePage.html#Login";
+            }, 2000);
+        } else {
+            showToast("Registration failed: " + result.message, "error");
+        }
+    } catch (error) {
+        console.error("Error submitting the form:", error);
+        showToast("An error occurred. Please try again later.", "error");
     }
+}
 
     // Reuse the showToast function from your login script
     function showToast(message, type) {
@@ -108,32 +114,6 @@
             stopOnFocus: true, // Prevents dismissing on hover
         }).showToast();
     }
-
-
-
-        // Function to preview the uploaded image
-        // function previewImage(event) {
-        //     const file = event.target.files[0]; // Get the first file
-        //     const reader = new FileReader(); // Create a FileReader object
-
-        //     reader.onload = function(e) {
-        //         // Create an img element to display the preview
-        //         const imgElement = document.createElement("img");
-        //         imgElement.src = e.target.result; // Set the img src to the file data
-        //         imgElement.style.width = "10%"; // Optional: set width
-        //         imgElement.style.borderRadius = "8px"; // Optional: add some style
-
-        //         // Append the image to the container where you want to show it
-        //         const previewContainer = document.querySelector(".upload-background");
-        //         // Clear previous previews
-        //         previewContainer.innerHTML = "";
-        //         previewContainer.appendChild(imgElement);
-        //     };
-
-        //     if (file) {
-        //         reader.readAsDataURL(file); // Read the file as a Data URL
-        //     }
-        // }
     </script>
 </body>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>

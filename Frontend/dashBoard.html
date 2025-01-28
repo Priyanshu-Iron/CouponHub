@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:slnt,wght@1,100..1000&family=Merienda:wght@300..900&family=Pacifico&display=swap" rel="stylesheet">
     <title>Dashboard</title>
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 
 <body>
@@ -34,9 +35,94 @@
         </div>
     </nav>
 
-    <!-- Add more content below if needed -->
-    
-    <script src="dashboard.js"></script>
-</body>
+    <div id="addCoupon">
+        <button class="addCoupon" onclick="openPopup()">Add Coupon +</button>
+    </div>
 
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <button class="popup-close" onclick="closePopup()">&times;</button>
+            <h2>Add Coupon</h2>
+            <form id="addCouponForm" enctype="multipart/form-data" onsubmit="return handleCouponSubmit(event)">
+                <input type="text" id="couponName" name="name" placeholder="Coupon Name" required>
+                <input type="text" id="couponPlace" name="place" placeholder="Place" required>
+                <label for="expiryDate" class="ExpiryDate">Expiry Date</label>
+                <input type="date" id="expiryDate" name="expiryDate" required>
+                <input type="text" id="couponOwner" name="owner" placeholder="Owner" required>
+                <input type="file" id="couponImage" name="image" accept="image/*" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        const popupOverlay = document.getElementById('popupOverlay');
+
+        function openPopup() {
+            popupOverlay.style.display = 'flex';
+        }
+
+        function closePopup() {
+            popupOverlay.style.display = 'none';
+        }
+
+        async function handleCouponSubmit(event) {
+    event.preventDefault();
+
+    const form = document.getElementById('addCouponForm');
+    const formData = new FormData(form);
+
+    try {
+        // Get access token from localStorage instead of cookies
+        const accessToken = localStorage.getItem('accessToken');
+
+        if (!accessToken) {
+            showToast("Please login first", "error");
+            return;
+        }
+
+        const response = await fetch('http://localhost:8000/api/v1/coupons', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            },
+            credentials: 'include' // Include cookies in the request
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            showToast(errorData.message || "Failed to add coupon", "error");
+            return;
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showToast("Coupon added successfully!", "success");
+            form.reset();
+            closePopup();
+        } else {
+            showToast(result.message || "Failed to add coupon", "error");
+        }
+    } catch (error) {
+        console.error("Error submitting the form:", error);
+        showToast("An error occurred. Please try again later.", "error");
+    }
+}
+
+        function showToast(message, type) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: type === "success" ? "green" : "red",
+                stopOnFocus: true,
+            }).showToast();
+        }
+    </script>
+</body>
+<script src="dashboard.js"></script>
 </html>
