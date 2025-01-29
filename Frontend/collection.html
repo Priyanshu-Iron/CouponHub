@@ -3,34 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        .coupons-collection {
-            padding: 20px;
-        }
-
-        .coupon-item {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-        }
-
-        .coupon-item img {
-            max-width: 100px;
-            margin-top: 10px;
-            display: block;
-        }
-
-    </style>
+    <title>Collection</title>
     <!-- Include Toastify CSS and JS -->
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+    <link rel="stylesheet" href="/Frontend/collection.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:slnt,wght@1,100..1000&family=Merienda:wght@300..900&family=Pacifico&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
 </head>
 <body>
+    <div id="heading">
+        <h1>Your</h1>
+        <h1 id="couponheading">Coupons</h1>
+    </div>
     <div id="couponsCollection" class="coupons-collection">
-        <h2>Your Coupons</h2>
         <div id="couponList"></div>
     </div>    
 
