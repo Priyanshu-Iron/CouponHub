@@ -112,8 +112,8 @@ h1 {
 #heading {
     display: flex;
     flex-direction: row;
-    margin: 15px;
-    padding: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
     justify-content: center;
 }
 

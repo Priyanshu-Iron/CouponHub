@@ -342,3 +342,17 @@ label{
     font-family: "Afacad Flux", sans-serif;
     font-size: 20px;
 }
+
+#logoutButton{
+    font-family: "Afacad Flux", sans-serif;
+    color: #F0F0F0;
+    background-color: #1A253A;
+    font-size: 20px;
+    padding: 4px;
+    border-radius: 5px;
+    letter-spacing: 3px;
+}
+
+#logoutButton:hover{
+    background-color: #FF6500;
+}

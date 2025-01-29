@@ -30,6 +30,7 @@
                     <li><a href="/Frontend/profile.html">Profile</a></li>
                     <li><a href="/Frontend/collection.html">Collection</a></li>
                     <li><a href="#">History</a></li>
+                    <button id="logoutButton">Logut</button>
                 </ul>
             </div>
         </div>
@@ -123,6 +124,41 @@
     }
     return false;
 }
+
+// Logout
+document.getElementById('logoutButton').addEventListener('click', async function () {
+    try {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+            showToast("No active session found", "error");
+            return;
+        }
+
+        // Making the logout request to the API
+        const response = await fetch('http://localhost:8000/api/v1/users/logout', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            }
+        });
+
+        if (response.ok) {
+            // Clear the accessToken from localStorage
+            localStorage.removeItem('accessToken');
+
+            // Redirect user to login page or home
+            window.location.href = '/Frontend/homePage.html#Login';  // Modify with the actual login page path
+            showToast("Successfully logged out", "success");
+        } else {
+            const data = await response.json();
+            showToast(data.message || "Failed to log out", "error");
+        }
+    } catch (error) {
+        console.error("Error during logout:", error);
+        showToast("An error occurred while logging out. Please try again.", "error");
+    }
+});
+
 
 // Update the showToast function
 function showToast(message, type) {
