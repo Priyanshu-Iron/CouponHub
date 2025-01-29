@@ -23,9 +23,14 @@ const couponSchema = new mongoose.Schema({
     image: {
         type: String,
         required: false,
+    },
+    userId: { // Add this field to associate the coupon with a user
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
     }
 }, { timestamps: true });
 
 const Coupon = mongoose.model("Coupon", couponSchema);
 
-export { Coupon }; // Make sure this export statement is present
+export { Coupon };

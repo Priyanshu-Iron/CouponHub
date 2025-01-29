@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    async function fetchUserCoupons() {
+    try {
+        const accessToken = localStorage.getItem('accessToken');
+
+        if (!accessToken) {
+            showToast("Please login first", "error");
+            return;
+        }
+
+        const response = await fetch('http://localhost:8000/api/v1/coupons/user/coupons', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            },
+            credentials: 'include'
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            showToast(result.message || "Failed to fetch user coupons", "error");
+            return;
+        }
+
+        console.log("User Coupons:", result.data); // Display the coupons in your UI
+    } catch (error) {
+        console.error("Error fetching user coupons:", error);
+        showToast("An error occurred. Please try again later.", "error");
+    }
+}
+</script>
+</html>

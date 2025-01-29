@@ -28,7 +28,7 @@
             <div class="user icon" onclick="toggleMenu()">
                 <ul class="usersData" id="menu">
                     <li><a href="/Frontend/profile.html">Profile</a></li>
-                    <li><a href="#">Collection</a></li>
+                    <li><a href="/Frontend/collection.html">Collection</a></li>
                     <li><a href="#">History</a></li>
                 </ul>
             </div>
@@ -49,7 +49,7 @@
                 <label for="expiryDate" class="ExpiryDate">Expiry Date</label>
                 <input type="date" id="expiryDate" name="expiryDate" required>
                 <input type="text" id="couponOwner" name="owner" placeholder="Owner" required>
-                <input type="file" id="couponImage" name="image" accept="image/*" required>
+                <input type="file" id="couponImage" name="image" accept="image/*" >
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -66,20 +66,22 @@
         function closePopup() {
             popupOverlay.style.display = 'none';
         }
-
         async function handleCouponSubmit(event) {
     event.preventDefault();
 
-    const form = document.getElementById('addCouponForm');
-    const formData = new FormData(form);
-
     try {
-        // Get access token from localStorage instead of cookies
-        const accessToken = localStorage.getItem('accessToken');
+        const form = document.getElementById('addCouponForm');
+        const formData = new FormData(form);
 
+        const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) {
             showToast("Please login first", "error");
-            return;
+            return false;
+        }
+
+        // Log form data for debugging
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
         }
 
         const response = await fetch('http://localhost:8000/api/v1/coupons', {
@@ -87,42 +89,65 @@
             body: formData,
             headers: {
                 'Authorization': `Bearer ${accessToken}`
-            },
-            credentials: 'include' // Include cookies in the request
+            }
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            showToast(errorData.message || "Failed to add coupon", "error");
+        // Log the full response for debugging
+        // console.log('Response status:', response.status);
+        
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            console.log('Response data:', data);
+
+            if (response.status === 201) {
+                showToast("Coupon added successfully!", "success");
+                form.reset();
+                closePopup();
+            } else {
+                showToast(data.message || "Failed to add coupon", "error");
+            }
+        } else {
+            console.error('Received non-JSON response');
+            showToast("Unexpected server response", "error");
+        }
+
+    } catch (error) {
+        console.error("Error submitting form:", error);
+        showToast("An error occurred. Please try again.", "error");
+    }
+    return false;
+}
+
+// Update the showToast function
+function showToast(message, type) {
+    try {
+        console.log('Attempting to show toast:', message, type);
+        
+        if (typeof Toastify !== 'function') {
+            console.error('Toastify is not loaded!');
+            alert(message); // Fallback
             return;
         }
 
-        const result = await response.json();
+        Toastify({
+            text: message,
+            duration: 3000,
+            gravity: "top",
+            position: "center",
+            backgroundColor: type === "success" ? "#4caf50" : "#f44336",
+            stopOnFocus: true,
+            onClick: function(){} // Callback after click
+        }).showToast();
         
-        if (result.success) {
-            showToast("Coupon added successfully!", "success");
-            form.reset();
-            closePopup();
-        } else {
-            showToast(result.message || "Failed to add coupon", "error");
-        }
+        // console.log('Toast shown successfully');
     } catch (error) {
-        console.error("Error submitting the form:", error);
-        showToast("An error occurred. Please try again later.", "error");
+        console.error('Error showing toast:', error);
+        alert(message); // Fallback
     }
 }
-
-        function showToast(message, type) {
-            Toastify({
-                text: message,
-                duration: 3000,
-                gravity: "top",
-                position: "center",
-                backgroundColor: type === "success" ? "green" : "red",
-                stopOnFocus: true,
-            }).showToast();
-        }
     </script>
 </body>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="dashboard.js"></script>
 </html>

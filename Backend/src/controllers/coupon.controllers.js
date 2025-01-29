@@ -9,40 +9,56 @@ import { request } from "http";
  * Controller to create a new coupon.
  */
 const createCoupon = asyncHandler(async (req, res) => {
-    const { name, place, expiryDate, owner } = req.body;
-    console.log(request);
-    
+    try {
+        // console.log("Request body:", req.body);
+        // console.log("Request file:", req.file);
+        
+        const { name, place, expiryDate, owner } = req.body;
 
-    // Validate input fields
-    if ([name, place, expiryDate, owner].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "All fields are required");
-    }
-
-    // Check if a coupon with the same name and owner exists
-    const existingCoupon = await Coupon.findOne({ name, owner });
-    if (existingCoupon) {
-        throw new ApiError(409, "Coupon with the same name and owner already exists");
-    }
-
-    let image;
-    if (req.file) {
-        // Upload image to Cloudinary
-        image = await uploadOnCLOUDINARY(req.file.path);
-        if (!image) {
-            throw new ApiError(400, "Image upload failed");
+        // Validate input fields
+        if ([name, place, expiryDate, owner].some((field) => field?.trim() === "")) {
+            throw new ApiError(400, "All fields are required");
         }
+
+        // Check if a coupon with the same name and owner exists
+        // const existingCoupon = await Coupon.findOne({ name, owner });
+        // if (existingCoupon) {
+        //     throw new ApiError(409, "Coupon with the same name and owner already exists");
+        // }
+
+        let imageUrl = "";
+        if (req.file) {
+            console.log("Uploading file to Cloudinary...");
+            const uploadResult = await uploadOnCLOUDINARY(req.file.path);
+            
+            if (!uploadResult) {
+                throw new ApiError(400, "Image upload to Cloudinary failed");
+            }
+            
+            imageUrl = uploadResult.url;
+            console.log("Cloudinary upload successful, URL:", imageUrl);
+        }
+
+        // console.log("Creating coupon in database...");
+        const newCoupon = await Coupon.create({
+            name,
+            place,
+            expiryDate,
+            owner,
+            image: imageUrl,
+            userId: req.user._id
+        });
+
+        // console.log("Coupon created successfully:", newCoupon);
+
+        return res.status(201).json(
+            new ApiResponse(201, newCoupon, "Coupon created successfully")
+        );
+
+    } catch (error) {
+        console.error("Error in createCoupon:", error);
+        throw error;
     }
-
-    // Create a new coupon
-    const coupon = await Coupon.create({
-        name,
-        place,
-        expiryDate,
-        owner,
-        image: image?.url || "",
-    });
-
-    return res.status(201).json(new ApiResponse(201, coupon, "Coupon created successfully"));
 });
 
 /**
@@ -121,10 +137,24 @@ const deleteCoupon = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, {}, "Coupon deleted successfully"));
 });
 
+const getUserCoupons = asyncHandler(async (req, res) => {
+    const userId = req.user._id; // Get the user ID from the authenticated user
+
+    // Find all coupons associated with the user
+    const coupons = await Coupon.find({ userId });
+
+    if (!coupons || coupons.length === 0) {
+        throw new ApiError(404, "No coupons found for this user");
+    }
+
+    return res.status(200).json(new ApiResponse(200, coupons, "User coupons fetched successfully"));
+});
+
 export {
     createCoupon,
     getCoupons,
     getCouponById,
     updateCoupon,
     deleteCoupon,
+    getUserCoupons
 };

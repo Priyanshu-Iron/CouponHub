@@ -9,33 +9,61 @@ cloudinary.config({
 
 const uploadOnCLOUDINARY = async (localFilePath) => {
     try {
-        if (!localFilePath) return null
-            // Upload the file on Cloudinary
-            const response = await cloudinary.uploader.upload(localFilePath,{
-                resource_type : 'auto'
-            })
-            // File has been uploaded successfull
-            // console.log("File is uploaded on Cloudinary",response.url);
-            fs.unlinkSync(localFilePath)
-            return response;
-            
+        // Check if file exists
+        if (!localFilePath) {
+            console.error("No file path provided");
+            return null;
+        }
+
+        // Check if file exists on disk
+        if (!fs.existsSync(localFilePath)) {
+            console.error("File does not exist at path:", localFilePath);
+            return null;
+        }
+
+        // Upload the file to Cloudinary
+        const response = await cloudinary.uploader.upload(localFilePath, {
+            resource_type: "auto"
+        });
+
+        console.log("Cloudinary upload successful. URL:", response.url);
+        
+        // Clean up: remove the local file
+        fs.unlinkSync(localFilePath);
+        
+        return response;
+
     } catch (error) {
-        fs.unlinkSync(localFilePath) //Remove the locally saved temporary Files as the upload operation got failed
+        console.error("Error in uploadOnCLOUDINARY:", error);
+        
+        // Clean up: remove the local file if it exists
+        try {
+            if (localFilePath && fs.existsSync(localFilePath)) {
+                fs.unlinkSync(localFilePath);
+            }
+        } catch (unlinkError) {
+            console.error("Error deleting local file:", unlinkError);
+        }
+        
         return null;
     }
 }
 
-// Upload an image
-// const uploadResult = await cloudinary.uploader
-// .upload(
-//     'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
-//         public_id: 'shoes',
-//     }
-// )
-// .catch((error) => {
-//     console.log(error);
-// });
+// Add a verification function to check Cloudinary configuration
+const verifyCloudinaryConfig = () => {
+    const required = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
+    const missing = required.filter(key => !process.env[key]);
+    
+    if (missing.length > 0) {
+        console.error('Missing Cloudinary configuration:', missing);
+        return false;
+    }
+    return true;
+}
 
-// console.log(uploadResult);
+// Verify configuration on module load
+if (!verifyCloudinaryConfig()) {
+    console.error('Cloudinary configuration is incomplete');
+}
 
-export { uploadOnCLOUDINARY }
+export { uploadOnCLOUDINARY };
