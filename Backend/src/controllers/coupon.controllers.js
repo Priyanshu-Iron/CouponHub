@@ -28,7 +28,7 @@ const createCoupon = asyncHandler(async (req, res) => {
 
         let imageUrl = "";
         if (req.file) {
-            console.log("Uploading file to Cloudinary...");
+            // console.log("Uploading file to Cloudinary...");
             const uploadResult = await uploadOnCLOUDINARY(req.file.path);
             
             if (!uploadResult) {
