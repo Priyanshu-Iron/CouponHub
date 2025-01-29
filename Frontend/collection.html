@@ -4,40 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .coupons-collection {
+            padding: 20px;
+        }
+
+        .coupon-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .coupon-item img {
+            max-width: 100px;
+            margin-top: 10px;
+            display: block;
+        }
+
+    </style>
+    <!-- Include Toastify CSS and JS -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
 </head>
 <body>
-    
-</body>
-<script>
-    async function fetchUserCoupons() {
-    try {
-        const accessToken = localStorage.getItem('accessToken');
+    <div id="couponsCollection" class="coupons-collection">
+        <h2>Your Coupons</h2>
+        <div id="couponList"></div>
+    </div>    
 
-        if (!accessToken) {
-            showToast("Please login first", "error");
-            return;
-        }
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const couponListContainer = document.getElementById('couponList');
+            const accessToken = localStorage.getItem('accessToken');
 
-        const response = await fetch('http://localhost:8000/api/v1/coupons/user/coupons', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            },
-            credentials: 'include'
+            if (!accessToken) {
+                showToast("Please login to view your collection", "error");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8000/api/v1/coupons/user/coupons', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch coupons');
+                }
+
+                const result = await response.json();
+                const coupons = result.data; // Assuming coupons are in 'data'
+
+                if (!coupons || coupons.length === 0) {
+                    couponListContainer.innerHTML = "<p>No coupons added yet!</p>";
+                    return;
+                }
+
+                couponListContainer.innerHTML = ''; // Clear any existing content
+
+                coupons.forEach(coupon => {
+                    const couponElement = document.createElement('div');
+                    couponElement.classList.add('coupon-item');
+
+                    couponElement.innerHTML = `
+                        <h3>${coupon.name}</h3>
+                        <p>Place: ${coupon.place}</p>
+                        <p>Owner: ${coupon.owner}</p>
+                        <p>Expiry Date: ${new Date(coupon.expiryDate).toLocaleDateString()}</p>
+                        ${coupon.image ? `<img src="${coupon.image}" alt="${coupon.name}" />` : ''}
+                    `;
+                    couponListContainer.appendChild(couponElement);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                showToast(error.message || "Failed to load coupons", "error");
+            }
         });
 
-        const result = await response.json();
-
-        if (!response.ok) {
-            showToast(result.message || "Failed to fetch user coupons", "error");
-            return;
+        function showToast(message, type, duration = 3000) {
+            return Toastify({
+                text: message,
+                duration: duration || 3000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: 
+                    type === "success" ? "#4caf50" : 
+                    type === "error" ? "#f44336" : "#2196f3",
+                stopOnFocus: true,
+                close: duration === 0
+            }).showToast();
         }
-
-        console.log("User Coupons:", result.data); // Display the coupons in your UI
-    } catch (error) {
-        console.error("Error fetching user coupons:", error);
-        showToast("An error occurred. Please try again later.", "error");
-    }
-}
-</script>
+    </script>
+</body>
 </html>
