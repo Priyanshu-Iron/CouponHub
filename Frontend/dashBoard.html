@@ -45,11 +45,16 @@
             <h2>Add Coupon</h2>
             <form id="addCouponForm" enctype="multipart/form-data" onsubmit="return handleCouponSubmit(event)">
                 <input type="text" id="couponName" name="name" placeholder="Coupon Name" required>
-                <input type="text" id="couponPlace" name="place" placeholder="Place" required>
+                <input type="text" id="couponCode" name="couponCode" placeholder=" Coupon Code" required>
+                <input type="text" id="couponPlace" name="place" placeholder="Coupon Origin" required>
+                <label for="couponDescription">Coupon Description</label>
+                <input type="text" id="couponDescription" name="couponDescription" placeholder="A brief description or terms of the coupon" required>
                 <label for="expiryDate" class="ExpiryDate">Expiry Date</label>
                 <input type="date" id="expiryDate" name="expiryDate" required>
+                <input type="number" id="couponValue" name="couponValue" placeholder="Coupon Value" required>
                 <input type="text" id="couponOwner" name="owner" placeholder="Owner" required>
-                <input type="file" id="couponImage" name="image" accept="image/*" >
+                <input type="file" id="couponImage" name="image" accept="image/*" value="NO IMAGE">
+                <h3 id="checkbox"><input type="checkbox" id="termsandcondition" name="termsandcondition" required> Terms and Condition</h3>
                 <button type="submit">Submit</button>
             </form>
         </div>

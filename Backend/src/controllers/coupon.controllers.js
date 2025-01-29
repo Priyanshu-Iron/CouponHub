@@ -3,7 +3,6 @@ import { ApiError } from "../utils/apiError.js";
 import { Coupon } from "../models/coupon.models.js";
 import { uploadOnCLOUDINARY } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { request } from "http";
 
 /**
  * Controller to create a new coupon.
@@ -13,10 +12,10 @@ const createCoupon = asyncHandler(async (req, res) => {
         // console.log("Request body:", req.body);
         // console.log("Request file:", req.file);
         
-        const { name, place, expiryDate, owner } = req.body;
+        const { name, couponCode, place, couponDescription, couponValue, expiryDate, owner } = req.body;
 
         // Validate input fields
-        if ([name, place, expiryDate, owner].some((field) => field?.trim() === "")) {
+        if ([name, couponCode, place, couponDescription, couponValue, expiryDate, owner].some((field) => field?.trim() === "")) {
             throw new ApiError(400, "All fields are required");
         }
 
@@ -36,14 +35,17 @@ const createCoupon = asyncHandler(async (req, res) => {
             }
             
             imageUrl = uploadResult.url;
-            console.log("Cloudinary upload successful, URL:", imageUrl);
+            // console.log("Cloudinary upload successful, URL:", imageUrl);
         }
 
         // console.log("Creating coupon in database...");
         const newCoupon = await Coupon.create({
-            name,
-            place,
-            expiryDate,
+            name, 
+            couponCode, 
+            place, 
+            couponDescription, 
+            couponValue, 
+            expiryDate, 
             owner,
             image: imageUrl,
             userId: req.user._id
@@ -94,7 +96,7 @@ const getCouponById = asyncHandler(async (req, res) => {
  */
 const updateCoupon = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { name, place, expiryDate, owner } = req.body;
+    const { name, couponCode, place, couponDescription, couponValue, expiryDate, owner } = req.body;
 
     const coupon = await Coupon.findById(id);
 

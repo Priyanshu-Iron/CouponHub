@@ -6,8 +6,23 @@ const couponSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    couponCode: {
+        type: String,
+        required: true,
+        trim: true,
+    },
     place: {
         type: String,
+        required: true,
+        trim: true,
+    },
+    couponDescription: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    couponValue: {
+        type: Number,
         required: true,
         trim: true,
     },

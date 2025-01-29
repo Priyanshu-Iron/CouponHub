@@ -331,7 +331,13 @@ body.dark-mode .icon {
     cursor: pointer;
 }
 
-.ExpiryDate{
+label{
+    color: white;
+    font-family: "Afacad Flux", sans-serif;
+    font-size: 20px;
+}
+
+#checkbox{
     color: white;
     font-family: "Afacad Flux", sans-serif;
     font-size: 20px;

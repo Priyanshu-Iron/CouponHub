@@ -18,73 +18,124 @@
         <h1 id="couponheading">Coupons</h1>
     </div>
     <div id="couponsCollection" class="coupons-collection">
-        <div id="couponList"></div>
-    </div>    
+        <div id="couponList">
+            <p>Loading coupons...</p> <!-- Default loading state -->
+        </div>
+    </div>
+    
+    <!-- Modal for Coupon Details -->
+    <div id="couponModal" class="coupon-modal" aria-hidden="true">
+        <div class="coupon-modal-content">
+            <span id="closeModal" class="close-btn" aria-label="Close modal">&times;</span>
+            <div id="modalDetails"></div>
+        </div>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            const couponListContainer = document.getElementById('couponList');
-            const accessToken = localStorage.getItem('accessToken');
+        document.addEventListener('DOMContentLoaded', async function () {
+    const couponListContainer = document.getElementById('couponList');
+    const accessToken = localStorage.getItem('accessToken');
 
-            if (!accessToken) {
-                showToast("Please login to view your collection", "error");
-                return;
-            }
+    if (!accessToken) {
+        showToast("Please login to view your collection", "error");
+        return;
+    }
 
-            try {
-                const response = await fetch('http://localhost:8000/api/v1/coupons/user/coupons', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                    }
-                });
+    // Show loading state
+    couponListContainer.innerHTML = "<p>Loading coupons...</p>";
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch coupons');
-                }
-
-                const result = await response.json();
-                const coupons = result.data; // Assuming coupons are in 'data'
-
-                if (!coupons || coupons.length === 0) {
-                    couponListContainer.innerHTML = "<p>No coupons added yet!</p>";
-                    return;
-                }
-
-                couponListContainer.innerHTML = ''; // Clear any existing content
-
-                coupons.forEach(coupon => {
-                    const couponElement = document.createElement('div');
-                    couponElement.classList.add('coupon-item');
-
-                    couponElement.innerHTML = `
-                        <h3>${coupon.name}</h3>
-                        <p>Place: ${coupon.place}</p>
-                        <p>Owner: ${coupon.owner}</p>
-                        <p>Expiry Date: ${new Date(coupon.expiryDate).toLocaleDateString()}</p>
-                        ${coupon.image ? `<img src="${coupon.image}" alt="${coupon.name}" />` : ''}
-                    `;
-                    couponListContainer.appendChild(couponElement);
-                });
-            } catch (error) {
-                console.error('Error:', error);
-                showToast(error.message || "Failed to load coupons", "error");
-            }
+    try {
+        const response = await fetch('http://localhost:8000/api/v1/coupons/user/coupons', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
         });
 
-        function showToast(message, type, duration = 3000) {
-            return Toastify({
-                text: message,
-                duration: duration || 3000,
-                gravity: "top",
-                position: "center",
-                backgroundColor: 
-                    type === "success" ? "#4caf50" : 
-                    type === "error" ? "#f44336" : "#2196f3",
-                stopOnFocus: true,
-                close: duration === 0
-            }).showToast();
+        if (!response.ok) {
+            throw new Error('Failed to fetch coupons');
         }
+
+        const result = await response.json();
+        const coupons = result.data;
+
+        if (!coupons || coupons.length === 0) {
+            couponListContainer.innerHTML = "<p>No coupons added yet!</p>";
+            return;
+        }
+
+        couponListContainer.innerHTML = ''; // Clear loading state
+
+        coupons.forEach(coupon => {
+            const couponElement = document.createElement('div');
+            couponElement.classList.add('coupon-item');
+
+            couponElement.innerHTML = `
+                <h3>${coupon.name}</h3>
+                <h3>${coupon.couponCode}</h3>
+                <h3>${coupon.couponValue}</h3>
+                <p>Place: ${coupon.place}</p>
+                <p>Owner: ${coupon.owner}</p>
+                <p>Expiry Date: ${new Date(coupon.expiryDate).toLocaleDateString()}</p>
+                <button class="expand-btn">Show Details</button>
+            `;
+            couponListContainer.appendChild(couponElement);
+
+            const expandBtn = couponElement.querySelector('.expand-btn');
+
+            expandBtn.addEventListener('click', function () {
+                openModal(coupon);
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        showToast(error.message || "Failed to load coupons", "error");
+        couponListContainer.innerHTML = "<p>Failed to load coupons. Please try again later.</p>";
+    }
+});
+
+function openModal(coupon) {
+    const modal = document.getElementById('couponModal');
+    const modalDetails = document.getElementById('modalDetails');
+    const closeModal = document.getElementById('closeModal');
+
+    modalDetails.innerHTML = `
+        <h3>${coupon.name}</h3>
+        <h3>${coupon.couponCode}</h3>
+        <h3>${coupon.couponValue}</h3>
+        <p>Place: ${coupon.place}</p>
+        <p>Owner: ${coupon.owner}</p>
+        <p>Expiry Date: ${new Date(coupon.expiryDate).toLocaleDateString()}</p>
+        ${coupon.image ? `<img src="${coupon.image}" alt="${coupon.name}" />` : ''}
+        <h3>${coupon.couponDescription}</h3>
+    `;
+
+    modal.style.display = 'block';
+
+    closeModal.addEventListener('click', function () {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function (event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+
+function showToast(message, type, duration = 3000) {
+    return Toastify({
+        text: message,
+        duration: duration || 3000,
+        gravity: "top",
+        position: "center",
+        backgroundColor:
+            type === "success" ? "#4caf50" :
+                type === "error" ? "#f44336" : "#2196f3",
+        stopOnFocus: true,
+        close: duration === 0
+    }).showToast();
+}
     </script>
 </body>
 </html>
