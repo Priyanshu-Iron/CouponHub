@@ -1,59 +1,26 @@
 import mongoose from "mongoose";
 
 const couponSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    couponCode: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    place: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    couponDescription: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    couponValue: {
-        type: Number,
-        required: true,
-        trim: true,
-    },
-    expiryDate: {
-        type: Date,
-        required: true,
-    },
-    owner: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    image: {
-        type: String,
-        required: false,
-    },
-    isCodeVisible: {
-        type: Boolean,
-        default: false
-    },
-    allowedUsers: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-    userId: { // Add this field to associate the coupon with a user
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-    }
-}, { timestamps: true });
+    name: { type: String, required: true },
+    couponCode: { type: String, required: true },
+    place: { type: String, required: true },
+    couponDescription: { type: String, required: true },
+    couponValue: { type: Number, required: true },
+    expiryDate: { type: Date, required: true },
+    owner: { type: String, required: true },
+    image: { type: String },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    isCodeVisible: { type: Boolean, default: false },
+    allowedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    notifications: [{
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        message: { type: String },
+        status: { type: String, enum: ['pending', 'accepted', 'declined'] },
+        couponId: { type: mongoose.Schema.Types.ObjectId, ref: 'Coupon' },
+        couponName: { type: String },
+        read: { type: Boolean, default: false },
+        createdAt: { type: Date, default: Date.now }
+    }]
+});
 
-const Coupon = mongoose.model("Coupon", couponSchema);
-
-export { Coupon };
+export const Coupon = mongoose.model('Coupon', couponSchema);

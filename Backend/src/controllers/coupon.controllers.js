@@ -155,28 +155,35 @@ const getUserCoupons = asyncHandler(async (req, res) => {
 const getOtherUserCoupons = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     
-    // First get all coupons without the code
+    // Get all coupons not owned by the current user
     let coupons = await Coupon.find({ userId: { $ne: userId } })
-        .select('name place couponDescription couponValue expiryDate owner image isCodeVisible allowedUsers');
+        .populate('userId', 'username')
+        .select('name place couponDescription couponValue expiryDate owner image isCodeVisible allowedUsers couponCode notifications');
     
     if (!coupons || coupons.length === 0) {
         throw new ApiError(404, "No other user coupons found");
     }
     
-    // For coupons that should show the code, fetch the complete data
-    const mappedCoupons = await Promise.all(coupons.map(async (coupon) => {
+    // Map through coupons and handle code visibility
+    const mappedCoupons = coupons.map(coupon => {
         const couponObj = coupon.toObject();
         
-        if (couponObj.isCodeVisible || (couponObj.allowedUsers && couponObj.allowedUsers.includes(userId))) {
-            // Fetch the complete coupon including code
-            const fullCoupon = await Coupon.findById(coupon._id);
-            return fullCoupon.toObject();
+        // Show code if user is in allowedUsers array
+        const isAllowed = couponObj.allowedUsers.some(id => id.toString() === userId.toString());
+        
+        // Check if there's an accepted notification for this user
+        const hasAcceptedRequest = couponObj.notifications.some(notification => 
+            notification.userId.toString() === userId.toString() && 
+            notification.status === 'accepted'
+        );
+        
+        // Only show code if user is allowed or has accepted request
+        if (!isAllowed && !hasAcceptedRequest) {
+            couponObj.couponCode = '****-****-****';
         }
         
-        // For hidden coupons, mask the code
-        couponObj.couponCode = '****-****-****';
         return couponObj;
-    }));
+    });
     
     return res.status(200).json(
         new ApiResponse(200, mappedCoupons, "Other user coupons fetched successfully")
@@ -192,17 +199,118 @@ const requestCouponAccess = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Coupon not found");
     }
     
-    // Notify the coupon owner (you can implement notification system here)
-    // For now, we'll just add the user to allowed users
-    if (!coupon.allowedUsers.includes(userId)) {
-        coupon.allowedUsers.push(userId);
-        await coupon.save();
-    }
+    // Create notification with coupon details
+    const notification = {
+        userId: userId,
+        message: `User ${req.user.username} has requested access to your coupon "${coupon.name}"`,
+        read: false,
+        status: 'pending',
+        couponId: coupon._id,
+        couponName: coupon.name // Add the coupon name directly to the notification
+    };
+    
+    coupon.notifications.push(notification);
+    await coupon.save();
     
     return res.status(200).json(
         new ApiResponse(200, {}, "Access request sent successfully")
     );
-})
+});
+
+const getNotifications = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    
+    // Find coupons and populate necessary fields
+    const coupons = await Coupon.find({ userId })
+        .select('notifications name')
+        .populate({
+            path: 'notifications.userId',
+            select: 'username'
+        })
+        .populate({
+            path: 'notifications.couponId',
+            select: 'name'
+        });
+    
+    // Map notifications with proper coupon information
+    const notifications = coupons.flatMap(coupon => 
+        coupon.notifications.map(notification => ({
+            ...notification.toObject(),
+            couponName: notification.couponId ? notification.couponId.name : coupon.name
+        }))
+    );
+    
+    return res.status(200).json(
+        new ApiResponse(
+            200, 
+            notifications,
+            notifications.length > 0 ? "Notifications fetched successfully" : "No notifications found"
+        )
+    );
+});
+
+const handleNotificationResponse = asyncHandler(async (req, res) => {
+    const { notificationId, action } = req.params;
+    const userId = req.user._id;
+
+    const coupon = await Coupon.findOne({
+        'notifications._id': notificationId
+    });
+
+    if (!coupon) {
+        throw new ApiError(404, "Notification not found");
+    }
+
+    const notification = coupon.notifications.id(notificationId);
+    const requestingUserId = notification.userId;
+
+    if (action === 'accept') {
+        // Add user to allowed users if not already added
+        if (!coupon.allowedUsers.includes(requestingUserId)) {
+            coupon.allowedUsers.push(requestingUserId);
+        }
+        notification.status = 'accepted';
+
+        // Update notification for requesting user
+        const userNotification = {
+            userId: coupon.userId,
+            message: `Your request for access to coupon "${coupon.name}" has been accepted. You can now view the coupon code.`,
+            status: 'accepted',
+            couponId: coupon._id,
+            couponName: coupon.name
+        };
+
+        await Coupon.findOneAndUpdate(
+            { userId: requestingUserId },
+            { $push: { notifications: userNotification } }
+        );
+    } else if (action === 'decline') {
+        notification.status = 'declined';
+        
+        const userNotification = {
+            userId: coupon.userId,
+            message: `Your request for access to coupon "${coupon.name}" has been declined.`,
+            status: 'declined',
+            couponId: coupon._id,
+            couponName: coupon.name
+        };
+
+        await Coupon.findOneAndUpdate(
+            { userId: requestingUserId },
+            { $push: { notifications: userNotification } }
+        );
+    }
+
+    await coupon.save();
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            { status: notification.status },
+            `Request ${action}ed successfully`
+        )
+    );
+});
 
 export {
     createCoupon,
@@ -213,4 +321,6 @@ export {
     getUserCoupons,
     getOtherUserCoupons,
     requestCouponAccess,
+    handleNotificationResponse,
+    getNotifications,
 };

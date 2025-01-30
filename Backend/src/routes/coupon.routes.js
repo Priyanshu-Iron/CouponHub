@@ -1,4 +1,6 @@
-import { Router } from "express";
+import express from "express";
+import { upload, handleMulterError } from "../middlewares/multer.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
     createCoupon,
     getCoupons,
@@ -7,31 +9,36 @@ import {
     deleteCoupon,
     getUserCoupons,
     getOtherUserCoupons,
-    requestCouponAccess
+    requestCouponAccess,
+    handleNotificationResponse,
+    getNotifications
 } from "../controllers/coupon.controllers.js";
-import { upload } from "../middlewares/multer.middleware.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
 
-const router = Router();
+const router = express.Router();
 
-// Create new coupon
-router.post("/", verifyJWT, upload.single("image"), createCoupon);
+// Routes with file upload
+router.post("/", 
+    verifyJWT, 
+    upload.single('image'), 
+    handleMulterError, 
+    createCoupon
+);
 
-// Get all coupons
+router.put("/:id", 
+    verifyJWT, 
+    upload.single('image'), 
+    handleMulterError, 
+    updateCoupon
+);
+
+// Other routes remain the same
 router.get("/", verifyJWT, getCoupons);
-
-// Get other users' coupons - Place specific routes before parameter routes
+router.post('/notifications/:notificationId/:action', verifyJWT, handleNotificationResponse);
+router.get("/notifications", verifyJWT, getNotifications);
 router.get("/others", verifyJWT, getOtherUserCoupons);
-
-// Get user-specific coupons
-router.get("/user/coupons", verifyJWT, getUserCoupons);
-
-// Request access to a coupon
-router.post("/request-access/:id", verifyJWT, requestCouponAccess);
-
-// Routes with parameters should come last
+router.get("/user", verifyJWT, getUserCoupons);
 router.get("/:id", verifyJWT, getCouponById);
-router.patch("/:id", verifyJWT, upload.single("image"), updateCoupon);
 router.delete("/:id", verifyJWT, deleteCoupon);
+router.post("/:id/request-access", verifyJWT, requestCouponAccess);
 
 export default router;

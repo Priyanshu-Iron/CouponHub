@@ -23,14 +23,16 @@
 
         <div class="icon-container">
             <button id="toggleSwitch" class="lightMode icon"></button>
-            <a href="#" class="notification icon"></a>
+            <div class="notification icon">
+                <div class="notification-dropdown"></div>
+            </div>
             <a href="#" class="setting icon"></a>
             <div class="user icon" onclick="toggleMenu()">
                 <ul class="usersData" id="menu">
                     <li><a href="/Frontend/profile.html">Profile</a></li>
                     <li><a href="/Frontend/collection.html">Collection</a></li>
                     <li><a href="#">History</a></li>
-                    <button id="logoutButton">Logut</button>
+                    <button id="logoutButton">Logout</button>
                 </ul>
             </div>
         </div>
@@ -45,7 +47,7 @@
             <button class="popup-close" onclick="closePopup()">&times;</button>
             <h2>Add Coupon</h2>
             <form id="addCouponForm" enctype="multipart/form-data" onsubmit="return handleCouponSubmit(event)">
-                <input type="text" id="couponName" name="name" placeholder="Coupon Name" required>
+                <input type="text" id="name" name="name" placeholder="Coupon Name" required>
                 <input type="text" id="couponCode" name="couponCode" placeholder=" Coupon Code" required>
                 <input type="text" id="couponPlace" name="place" placeholder="Coupon Origin" required>
                 <label for="couponDescription">Coupon Description</label>
@@ -77,6 +79,7 @@
         function closePopup() {
             popupOverlay.style.display = 'none';
         }
+        
         async function handleCouponSubmit(event) {
     event.preventDefault();
 
@@ -90,9 +93,23 @@
             return false;
         }
 
-        // Log form data for debugging
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
+        // Validate form data
+        const requiredFields = ['name', 'couponCode', 'place', 'couponDescription', 'expiryDate', 'couponValue', 'owner'];
+        for (const field of requiredFields) {
+            if (!formData.get(field)) {
+                showToast(`${field} is required`, "error");
+                return false;
+            }
+        }
+
+        // Validate image if present
+        const imageFile = formData.get('image');
+        if (imageFile && imageFile.size > 0) {
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(imageFile.type)) {
+                showToast("Please upload a valid image file (JPG, PNG, or GIF)", "error");
+                return false;
+            }
         }
 
         const response = await fetch('http://localhost:8000/api/v1/coupons', {
@@ -103,29 +120,21 @@
             }
         });
 
-        // Log the full response for debugging
-        // console.log('Response status:', response.status);
+        const data = await response.json();
         
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-            const data = await response.json();
-            console.log('Response data:', data);
-
-            if (response.status === 201) {
-                showToast("Coupon added successfully!", "success");
-                form.reset();
-                closePopup();
-            } else {
-                showToast(data.message || "Failed to add coupon", "error");
-            }
+        if (response.ok) {
+            showToast("Coupon added successfully!", "success");
+            form.reset();
+            closePopup();
+            // Refresh the coupons display
+            fetchAndDisplayOtherUserCoupons();
         } else {
-            console.error('Received non-JSON response');
-            showToast("Unexpected server response", "error");
+            throw new Error(data.message || "Failed to add coupon");
         }
 
     } catch (error) {
         console.error("Error submitting form:", error);
-        showToast("An error occurred. Please try again.", "error");
+        showToast(error.message || "An error occurred. Please try again.", "error");
     }
     return false;
 }
@@ -204,26 +213,31 @@ async function fetchAndDisplayOtherUserCoupons() {
         
         const data = await response.json();
         const couponsContainer = document.getElementById('otherUserCoupons');
+        couponsContainer.innerHTML = ''; // Clear existing coupons
         
         data.data.forEach(coupon => {
             const couponElement = document.createElement('div');
             couponElement.className = 'coupon-card';
             
-            const couponCode = coupon.isCodeVisible ? coupon.couponCode : '****-****-****';
+            const hasAccess = coupon.couponCode !== '****-****-****';
             
             couponElement.innerHTML = `
-                <img src="${coupon.image || 'placeholder.jpg'}" alt="Coupon Image">
-                <h3>${coupon.name}</h3>
-                <p>Origin: ${coupon.place}</p>
-                <p>Value: ${coupon.couponValue}</p>
-                <p>Expires: ${new Date(coupon.expiryDate).toLocaleDateString()}</p>
-                <p>Owner: ${coupon.owner}</p>
-                <div class="coupon-code">
-                    <span id="code-${coupon._id}">${couponCode}</span>
-                    ${!coupon.isCodeVisible ? 
-                        `<button onclick="requestAccess('${coupon._id}')">Request Access</button>` : 
-                        ''
-                    }
+                <img src="${coupon.image || 'placeholder.jpg'}" alt="Coupon Image" class="coupon-image">
+                <div class="coupon-details">
+                    <h3>${coupon.name}</h3>
+                    <p>Origin: ${coupon.place}</p>
+                    <p>Value: ${coupon.couponValue}</p>
+                    <p>Expires: ${new Date(coupon.expiryDate).toLocaleDateString()}</p>
+                    <p>Owner: ${coupon.owner}</p>
+                    <div class="coupon-code ${hasAccess ? 'visible' : ''}">
+                        <span>${coupon.couponCode}</span>
+                        ${!hasAccess ? 
+                            `<button onclick="requestAccess('${coupon._id}')" class="request-button">
+                                Request Access
+                            </button>` : 
+                            '<span class="access-granted">Access Granted</span>'
+                        }
+                    </div>
                 </div>
             `;
             
@@ -255,6 +269,125 @@ async function requestAccess(couponId) {
 
 // Call this when the page loads
 document.addEventListener('DOMContentLoaded', fetchAndDisplayOtherUserCoupons);
+
+async function fetchNotifications() {
+    try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await fetch('http://localhost:8000/api/v1/coupons/notifications', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+        
+        const data = await response.json();
+        const notificationsContainer = document.querySelector('.notification-dropdown');
+        
+        notificationsContainer.innerHTML = ''; // Clear previous notifications
+        
+        if (data.data && data.data.length > 0) {
+            data.data.forEach(notification => {
+                const notificationElement = document.createElement('div');
+                notificationElement.className = 'notification-item';
+                
+                // Only show action buttons if status is pending or not set
+                const showActions = !notification.status || notification.status === 'pending';
+                
+                notificationElement.innerHTML = `
+                    <div class="notification-content">
+                        <p><strong>${notification.userId?.username || 'Unknown User'}</strong> requested access to coupon "${notification.couponId?.name || 'Unknown Coupon'}"</p>
+                        <small>${new Date(notification.createdAt).toLocaleString()}</small>
+                        ${!showActions ? `
+                            <div class="status-badge ${notification.status}">
+                                ${notification.status.charAt(0).toUpperCase() + notification.status.slice(1)}
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${showActions ? `
+                        <div class="notification-actions">
+                            <button onclick="handleNotification('${notification._id}', 'accept')" class="accept-btn">Accept</button>
+                            <button onclick="handleNotification('${notification._id}', 'decline')" class="decline-btn">Decline</button>
+                        </div>
+                    ` : ''}
+                `;
+                notificationsContainer.appendChild(notificationElement);
+            });
+        } else {
+            notificationsContainer.innerHTML = `
+                <div class="notification-item no-notifications">
+                    <p>No new notifications</p>
+                    <small>Check back later for updates!</small>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        showToast('Failed to load notifications', 'error');
+    }
+}
+
+// Update the handleNotification function
+async function handleNotification(notificationId, action) {
+    try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await fetch(`http://localhost:8000/api/v1/coupons/notifications/${notificationId}/${action}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            showToast(`Request ${action}ed successfully`, 'success');
+            // Immediately refresh notifications to show updated status
+            await fetchNotifications();
+        } else {
+            showToast(`Failed to ${action} request`, 'error');
+        }
+    } catch (error) {
+        console.error(`Error ${action}ing notification:`, error);
+        showToast(`Failed to ${action} request`, 'error');
+    }
+}
+
+// Add event listener to the notification icon
+document.querySelector('.notification.icon').addEventListener('click', fetchNotifications);
+
+
+// Add this to your JavaScript code
+let isNotificationOpen = false;
+
+document.querySelector('.notification.icon').addEventListener('click', function(e) {
+    e.stopPropagation(); // Prevent event from bubbling up
+    const dropdown = document.querySelector('.notification-dropdown');
+    
+    // Toggle dropdown visibility
+    if (!isNotificationOpen) {
+        dropdown.style.display = 'block';
+        isNotificationOpen = true;
+        fetchNotifications(); // Fetch notifications when opening
+    } else {
+        dropdown.style.display = 'none';
+        isNotificationOpen = false;
+    }
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    const dropdown = document.querySelector('.notification-dropdown');
+    const notificationIcon = document.querySelector('.notification.icon');
+    
+    if (!notificationIcon.contains(e.target) && isNotificationOpen) {
+        dropdown.style.display = 'none';
+        isNotificationOpen = false;
+    }
+});
+
+// Prevent dropdown from closing when clicking inside it
+document.querySelector('.notification-dropdown').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
     </script>
 </body>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>

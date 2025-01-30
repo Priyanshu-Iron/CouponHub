@@ -25,4 +25,5 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
     // Attach user to the request object for further access
     req.user = user;
     next();
+
 });
