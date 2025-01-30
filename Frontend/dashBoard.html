@@ -214,7 +214,7 @@ async function fetchAndDisplayOtherUserCoupons() {
             couponElement.innerHTML = `
                 <img src="${coupon.image || 'placeholder.jpg'}" alt="Coupon Image">
                 <h3>${coupon.name}</h3>
-                <p>Place: ${coupon.place}</p>
+                <p>Origin: ${coupon.place}</p>
                 <p>Value: ${coupon.couponValue}</p>
                 <p>Expires: ${new Date(coupon.expiryDate).toLocaleDateString()}</p>
                 <p>Owner: ${coupon.owner}</p>
