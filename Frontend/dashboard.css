@@ -376,6 +376,7 @@ label{
     overflow: hidden;
     position: relative;
     border: 4px solid #FF6500;
+    z-index: -1;
 }
 
 .coupon-card:hover {
