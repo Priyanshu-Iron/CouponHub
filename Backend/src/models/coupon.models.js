@@ -39,6 +39,14 @@ const couponSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
+    isCodeVisible: {
+        type: Boolean,
+        default: false
+    },
+    allowedUsers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     userId: { // Add this field to associate the coupon with a user
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

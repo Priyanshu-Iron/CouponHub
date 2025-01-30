@@ -61,6 +61,11 @@
         </div>
     </div>
 
+    <div id="trendingHeading">Trending Deals & Coupons</div>
+    <div id="otherUserCoupons" class="coupon-grid">
+        <!-- Coupons will be populated here -->
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         const popupOverlay = document.getElementById('popupOverlay');
@@ -187,6 +192,69 @@ function showToast(message, type) {
         alert(message); // Fallback
     }
 }
+
+async function fetchAndDisplayOtherUserCoupons() {
+    try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await fetch('http://localhost:8000/api/v1/coupons/others', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+        
+        const data = await response.json();
+        const couponsContainer = document.getElementById('otherUserCoupons');
+        
+        data.data.forEach(coupon => {
+            const couponElement = document.createElement('div');
+            couponElement.className = 'coupon-card';
+            
+            const couponCode = coupon.isCodeVisible ? coupon.couponCode : '****-****-****';
+            
+            couponElement.innerHTML = `
+                <img src="${coupon.image || 'placeholder.jpg'}" alt="Coupon Image">
+                <h3>${coupon.name}</h3>
+                <p>Place: ${coupon.place}</p>
+                <p>Value: ${coupon.couponValue}</p>
+                <p>Expires: ${new Date(coupon.expiryDate).toLocaleDateString()}</p>
+                <p>Owner: ${coupon.owner}</p>
+                <div class="coupon-code">
+                    <span id="code-${coupon._id}">${couponCode}</span>
+                    ${!coupon.isCodeVisible ? 
+                        `<button onclick="requestAccess('${coupon._id}')">Request Access</button>` : 
+                        ''
+                    }
+                </div>
+            `;
+            
+            couponsContainer.appendChild(couponElement);
+        });
+    } catch (error) {
+        console.error('Error fetching other user coupons:', error);
+        showToast('Failed to load other user coupons', 'error');
+    }
+}
+
+async function requestAccess(couponId) {
+    try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await fetch(`http://localhost:8000/api/v1/coupons/${couponId}/request-access`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+        
+        const data = await response.json();
+        showToast(data.message, data.success ? 'success' : 'error');
+    } catch (error) {
+        console.error('Error requesting access:', error);
+        showToast('Failed to request access', 'error');
+    }
+}
+
+// Call this when the page loads
+document.addEventListener('DOMContentLoaded', fetchAndDisplayOtherUserCoupons);
     </script>
 </body>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>

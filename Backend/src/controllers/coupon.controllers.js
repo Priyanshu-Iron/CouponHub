@@ -152,11 +152,65 @@ const getUserCoupons = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, coupons, "User coupons fetched successfully"));
 });
 
+const getOtherUserCoupons = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    
+    // First get all coupons without the code
+    let coupons = await Coupon.find({ userId: { $ne: userId } })
+        .select('name place couponDescription couponValue expiryDate owner image isCodeVisible allowedUsers');
+    
+    if (!coupons || coupons.length === 0) {
+        throw new ApiError(404, "No other user coupons found");
+    }
+    
+    // For coupons that should show the code, fetch the complete data
+    const mappedCoupons = await Promise.all(coupons.map(async (coupon) => {
+        const couponObj = coupon.toObject();
+        
+        if (couponObj.isCodeVisible || (couponObj.allowedUsers && couponObj.allowedUsers.includes(userId))) {
+            // Fetch the complete coupon including code
+            const fullCoupon = await Coupon.findById(coupon._id);
+            return fullCoupon.toObject();
+        }
+        
+        // For hidden coupons, mask the code
+        couponObj.couponCode = '****-****-****';
+        return couponObj;
+    }));
+    
+    return res.status(200).json(
+        new ApiResponse(200, mappedCoupons, "Other user coupons fetched successfully")
+    );
+});
+
+const requestCouponAccess = asyncHandler(async (req, res) => {
+    const { id: couponId } = req.params;
+    const userId = req.user._id;
+    
+    const coupon = await Coupon.findById(couponId);
+    if (!coupon) {
+        throw new ApiError(404, "Coupon not found");
+    }
+    
+    // Notify the coupon owner (you can implement notification system here)
+    // For now, we'll just add the user to allowed users
+    if (!coupon.allowedUsers.includes(userId)) {
+        coupon.allowedUsers.push(userId);
+        await coupon.save();
+    }
+    
+    return res.status(200).json(
+        new ApiResponse(200, {}, "Access request sent successfully")
+    );
+})
+
 export {
     createCoupon,
     getCoupons,
     getCouponById,
     updateCoupon,
     deleteCoupon,
-    getUserCoupons
+    getUserCoupons,
+    getOtherUserCoupons,
+    requestCouponAccess,
 };
